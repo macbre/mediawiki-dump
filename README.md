@@ -11,3 +11,4 @@ This project uses `pipenv`. [How to install `pipenv`](https://pipenv.readthedocs
 
 * [ FTS - Färöisk textsamling](https://spraakbanken.gu.se/korp/?mode=faroe)
 * [Current XML dump](https://dumps.wikimedia.org/fowikisource/latest/fowikisource-latest-pages-meta-current.xml.bz2) (~14 MB)
+* [MediaWiki XML dump format](https://www.mediawiki.org/wiki/Help:Export#Export_format)
