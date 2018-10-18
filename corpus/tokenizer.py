@@ -4,7 +4,10 @@ Cleans and tokenizes given text
 import re
 
 
-class Tokenizer(object):
+class Tokenizer:
+    """
+    A basic, wikitext-based tokenizing utility class
+    """
 
     @staticmethod
     def clean(text):
@@ -26,3 +29,11 @@ class Tokenizer(object):
         text = re.sub(r'{{[^}]+}}', '', text)
 
         return text
+
+    @staticmethod
+    def tokenize(text):
+        """
+        :type text str
+        :rtype list[str]
+        """
+        raise NotImplementedError()
