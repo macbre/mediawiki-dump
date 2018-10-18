@@ -81,6 +81,9 @@ class TestTokenizer:
         assert tokenize('Foo bar?') \
             == ['Foo', 'bar']
 
+        assert tokenize('Foo bar? Foo bar!') \
+            == ['Foo', 'bar', 'Foo', 'bar']
+
         assert tokenize('Foo bar ?') \
             == ['Foo', 'bar']
 
