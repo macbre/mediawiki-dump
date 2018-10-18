@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from corpus.tokenizer import clean, tokenize
+from corpus.tokenizer import clean, tokenize, tokenize_filter
 
 
 class TestTokenizerClean(TestCase):
@@ -56,18 +56,51 @@ class TestTokenizerClean(TestCase):
 
 
 class TestTokenizer:
+    def test_filter(self):
+        assert tokenize_filter('') is False
+
+        assert tokenize_filter('foo') is True
+
+        assert tokenize_filter('aa23') is True
+        assert tokenize_filter('1aa23') is True
+        assert tokenize_filter('123') is False
+
     def test(self):
-        assert tokenize('Foo bar 1 and 5') \
-            == ('Foo', 'bar', 'and')
+        assert tokenize('Foo bar') \
+            == ['Foo', 'bar']
 
-        assert tokenize('Foo bar 1 * 5') \
-            == ('Foo', 'bar')
+        assert tokenize('Foo bar.') \
+            == ['Foo', 'bar']
 
-        assert tokenize('Foo bar. Test 123') \
-            == ('Foo', 'bar', 'test')
+        assert tokenize('Foo, bar') \
+            == ['Foo', 'bar']
+
+        assert tokenize('Foo (bar)') \
+            == ['Foo', 'bar']
+
+        assert tokenize('Foo bar?') \
+            == ['Foo', 'bar']
+
+        assert tokenize('Foo bar ?') \
+            == ['Foo', 'bar']
+
+        assert tokenize('Foo bar!') \
+            == ['Foo', 'bar']
 
         assert tokenize('Foo-bar') \
-            == ('Foo', 'test')
+            == ['Foo', 'bar']
+
+        assert tokenize('Foo - bar') \
+            == ['Foo', 'bar']
+
+        assert tokenize('Foo bar 1 and 5') \
+            == ['Foo', 'bar', 'and']
+
+        assert tokenize('Foo bar 1 * 5') \
+            == ['Foo', 'bar']
+
+        assert tokenize('Foo bar. Test 123') \
+            == ['Foo', 'bar', 'Test']
 
         assert tokenize('Klaksvíkar kommuna er næststørsta kommuna í Føroyum.') \
-            == ('Klaksvíkar', 'kommuna', 'er', 'næststørsta', 'kommuna', 'í', 'Føroyum')
+            == ['Klaksvíkar', 'kommuna', 'er', 'næststørsta', 'kommuna', 'í', 'Føroyum']

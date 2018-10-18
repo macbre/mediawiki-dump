@@ -7,7 +7,7 @@ import re
 def clean(text):
     """
     :type text str
-    :rtype str
+    :rtype: str
     """
     # basic formatting
     text = re.sub(r"'''?([^']+)'''?", '\\1', text)
@@ -35,9 +35,37 @@ def clean(text):
     return text.strip()
 
 
-def tokenize(text):
+def tokenize_filter(text):
     """
     :type text str
-    :rtype list[str]
+    :rtype: bool
     """
-    raise NotImplementedError()
+    if text == '':
+        return False
+
+    if text[0].isdigit() and re.fullmatch(r'\d+', text):
+        return False
+
+    if text in ['*']:
+        return False
+
+    return True
+
+
+def tokenize(text, filter_func=tokenize_filter):
+    """
+    :type text str
+    :type filter_func callable
+    :rtype: list[str]
+    """
+    # clean up the text
+    text = re.sub(r'[?.,:;!()]', '', text)  # remove noise
+
+    text = text.strip()
+
+    # tokenize
+    parts = re.split(r'[-\s]', text)
+
+    parts = filter(filter_func, parts)
+
+    return list(parts)
