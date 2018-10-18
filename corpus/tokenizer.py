@@ -4,46 +4,40 @@ Cleans and tokenizes given text
 import re
 
 
-class Tokenizer:
+def clean(text):
     """
-    A basic, wikitext-based tokenizing utility class
+    :type text str
+    :rtype str
     """
+    # basic formatting
+    text = re.sub(r"'''?([^']+)'''?", '\\1', text)
 
-    @staticmethod
-    def clean(text):
-        """
-        :type text str
-        :rtype str
-        """
-        # basic formatting
-        text = re.sub(r"'''?([^']+)'''?", '\\1', text)
+    # headings
+    text = re.sub(r'^=+\s?([^=]+)\s?=+', lambda matches: matches.group(1).strip(),
+                  text, flags=re.MULTILINE)  # == a == -> a
 
-        # headings
-        text = re.sub(r'^=+\s?([^=]+)\s?=+', lambda matches: matches.group(1).strip(),
-                      text, flags=re.MULTILINE)  # == a == -> a
+    # files and other links with namespaces
+    text = re.sub(r'\[\[[^:]+:[^\]]+\]\]', '', text)  # [[foo:b]] -> ''
 
-        # files and other links with namespaces
-        text = re.sub(r'\[\[[^:]+:[^\]]+\]\]', '', text)  # [[foo:b]] -> ''
+    # local links
+    text = re.sub(r'\[\[([^|\]]+)\]\]', '\\1', text)  # [[a]] -> a
+    text = re.sub(r'\[\[[^|]+\|([^\]]+)\]\]', '\\1', text)  # [[a|b]] -> b
 
-        # local links
-        text = re.sub(r'\[\[([^|\]]+)\]\]', '\\1', text)  # [[a]] -> a
-        text = re.sub(r'\[\[[^|]+\|([^\]]+)\]\]', '\\1', text)  # [[a|b]] -> b
+    # external links
+    text = re.sub(r'\[http[^\s]+ ([^\]]+)\]', '\\1', text)  # [[http://example.com foo]] -> foo
 
-        # external links
-        text = re.sub(r'\[http[^\s]+ ([^\]]+)\]', '\\1', text)  # [[http://example.com foo]] -> foo
+    # lists
+    text = re.sub(r'^\*+\s?', '', text, flags=re.MULTILINE)
 
-        # lists
-        text = re.sub(r'^\*+\s?', '', text, flags=re.MULTILINE)
+    # templates
+    text = re.sub(r'{{[^}]+}}', '', text)
 
-        # templates
-        text = re.sub(r'{{[^}]+}}', '', text)
+    return text.strip()
 
-        return text.strip()
 
-    @staticmethod
-    def tokenize(text):
-        """
-        :type text str
-        :rtype list[str]
-        """
-        raise NotImplementedError()
+def tokenize(text):
+    """
+    :type text str
+    :rtype list[str]
+    """
+    raise NotImplementedError()
