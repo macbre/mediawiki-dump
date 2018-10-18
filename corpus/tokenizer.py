@@ -15,6 +15,13 @@ class Tokenizer:
         :type text str
         :rtype str
         """
+        # basic formatting
+        text = re.sub(r"'''?([^']+)'''?", '\\1', text)
+
+        # headings
+        text = re.sub(r'^=+\s?([^=]+)\s?=+', lambda matches: matches.group(1).strip(),
+                      text, flags=re.MULTILINE)  # == a == -> a
+
         # local links
         text = re.sub(r'\[\[([^|\]]+)\]\]', '\\1', text)  # [[a]] -> a
         text = re.sub(r'\[\[[^|]+\|([^\]]+)\]\]', '\\1', text)  # [[a|b]] -> b

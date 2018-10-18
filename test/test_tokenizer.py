@@ -12,6 +12,17 @@ class TestTokenizer(TestCase):
         assert self.tokenizer.clean('Foo bar.') == 'Foo bar.'
         assert self.tokenizer.clean('foo bar') == 'foo bar'
 
+        # basic formatting
+        assert self.tokenizer.clean("''italic''") == 'italic'
+        assert self.tokenizer.clean("'''bold'''") == 'bold'
+
+        # headings
+        assert self.tokenizer.clean('==foo==') == 'foo'
+        assert self.tokenizer.clean('===Foo===') == 'Foo'
+        assert self.tokenizer.clean('=== Foo ===') == 'Foo'
+        assert self.tokenizer.clean('== Brot úr søguni hjá Klaksvíkar kommunu ==') \
+            == 'Brot úr søguni hjá Klaksvíkar kommunu'
+
         # links
         assert self.tokenizer.clean('[[foo]] bar') == 'foo bar'
         assert self.tokenizer.clean('[[foo]]s bar') == 'foos bar'
@@ -26,3 +37,8 @@ class TestTokenizer(TestCase):
 
         # templates
         assert self.tokenizer.clean('{{Kommunur}}') == ''
+
+    def test_complex_clean(self):
+        assert self.tokenizer.clean('=== Á [[Borðoy|Borðoynni]] ===') == 'Á Borðoynni'
+        assert self.tokenizer.clean("''' Klaksvíkar kommuna''' er næststørsta kommuna í [[Føroyar|Føroyum]].") \
+            == ' Klaksvíkar kommuna er næststørsta kommuna í Føroyum.'
