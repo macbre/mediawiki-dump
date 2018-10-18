@@ -23,7 +23,7 @@ class Tokenizer:
         text = re.sub(r'\[http[^\s]+ ([^\]]+)\]', '\\1', text)  # [[http://example.com foo]] -> foo
 
         # lists
-        text = re.sub(r'^\*\s?', '', text)
+        text = re.sub(r'^\*+\s?', '', text, flags=re.MULTILINE)
 
         # templates
         text = re.sub(r'{{[^}]+}}', '', text)
