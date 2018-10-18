@@ -22,6 +22,9 @@ class Tokenizer:
         text = re.sub(r'^=+\s?([^=]+)\s?=+', lambda matches: matches.group(1).strip(),
                       text, flags=re.MULTILINE)  # == a == -> a
 
+        # files and other links with namespaces
+        text = re.sub(r'\[\[[^:]+:[^\]]+\]\]', '', text)  # [[foo:b]] -> ''
+
         # local links
         text = re.sub(r'\[\[([^|\]]+)\]\]', '\\1', text)  # [[a]] -> a
         text = re.sub(r'\[\[[^|]+\|([^\]]+)\]\]', '\\1', text)  # [[a|b]] -> b
@@ -35,7 +38,7 @@ class Tokenizer:
         # templates
         text = re.sub(r'{{[^}]+}}', '', text)
 
-        return text
+        return text.strip()
 
     @staticmethod
     def tokenize(text):
