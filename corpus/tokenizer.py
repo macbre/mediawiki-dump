@@ -59,7 +59,7 @@ def tokenize(text, filter_func=tokenize_filter):
     :rtype: list[str]
     """
     # clean up the text
-    text = re.sub(r'[?.,:;!()]', '', text)  # remove noise
+    text = re.sub(r'[?.,:;!()"]', '', text)  # remove noise
 
     text = text.strip()
 
