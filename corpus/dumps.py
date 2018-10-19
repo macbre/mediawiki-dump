@@ -53,8 +53,8 @@ class WikipediaDump(BaseDump):
     Class for fetching Wikipedia dumps from https://dumps.wikimedia.org
     """
     def get_url(self):
-        return 'https://dumps.wikimedia.org/{lang}wikisource/latest/' \
-               '{lang}wikisource-latest-pages-meta-current.xml.bz2'.format(lang=self.wiki)
+        return 'https://dumps.wikimedia.org/{wiki}/latest/' \
+               '{wiki}-latest-pages-meta-current.xml.bz2'.format(wiki='{}wiki'.format(self.wiki))
 
     def get_content(self):
         """
