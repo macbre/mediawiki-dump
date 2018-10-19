@@ -3,6 +3,11 @@ CLasses that support fetching dumps
 """
 import bz2
 import logging
+
+from hashlib import md5
+from os.path import isfile
+from tempfile import gettempdir
+
 import requests
 
 
@@ -10,6 +15,8 @@ class BaseDump:
     """
     A generic dump class. Wikipedia or Wikia dumps
     should have a separate class that customizes get_url() method
+
+    TODO: support streaming of the decompressed content
     """
 
     def __init__(self, wiki):
@@ -23,6 +30,19 @@ class BaseDump:
         self.http.headers['User-Agent'] = \
             'python-corpus (+https://github.com/macbre/faroese-corpus)'
 
+    @staticmethod
+    def get_cache_filename(url):
+        """
+        Return a hashed filename of cache entry for a given URL
+
+        :type url str
+        :rtype: str
+        """
+        _hash = md5()
+        _hash.update(url.encode('utf-8'))
+
+        return 'wikicorpus_{hash}.bz2'.format(hash=_hash.hexdigest())
+
     def get_url(self):
         """
         :rtype: str
@@ -35,9 +55,24 @@ class BaseDump:
         """
         url = self.get_url()
 
+        cache_filename = '{}/{}'.format(gettempdir(), self.get_cache_filename(url))
+        self.logger.info("Checking %s cache file...", cache_filename)
+
+        # check cache
+        if isfile(cache_filename):
+            self.logger.info("Cache hit!")
+            with open(cache_filename, 'rb') as file:
+                return file.read()
+
+        # fetch the resource
         self.logger.info('Fetching %s dump from <%s>...', self.wiki, url)
         res = self.http.get(url)
         self.logger.info('HTTP %s (%d kB fetched)', res.status_code, len(res.content) / 1024)
+
+        # set the cache
+        with open(cache_filename, 'wb') as file:
+            file.write(res.content)
+            self.logger.info("Cache set")
 
         return res.content
 
