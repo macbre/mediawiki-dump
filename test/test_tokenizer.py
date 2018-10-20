@@ -5,22 +5,21 @@ from corpus.tokenizer import clean, tokenize, tokenize_filter
 
 class TestTokenizerClean(TestCase):
 
-    def test(self):
+    def test_basic(self):
         assert clean('Foo bar.') == 'Foo bar.'
         assert clean('foo bar') == 'foo bar'
 
-        # basic formatting
         assert clean("''italic''") == 'italic'
         assert clean("'''bold'''") == 'bold'
 
-        # headings
+    def test_headings(self):
         assert clean('==foo==') == 'foo'
         assert clean('===Foo===') == 'Foo'
         assert clean('=== Foo ===') == 'Foo'
         assert clean('== Brot úr søguni hjá Klaksvíkar kommunu ==') \
             == 'Brot úr søguni hjá Klaksvíkar kommunu'
 
-        # links
+    def test_links(self):
         assert clean('[[foo]] bar') == 'foo bar'
         assert clean('[[foo]]s bar') == 'foos bar'
         assert clean('av [[Norðoyar|Norðuroyggjum]].') == 'av Norðuroyggjum.'
@@ -28,16 +27,22 @@ class TestTokenizerClean(TestCase):
         assert clean('[[File:Kommunur í Føroyum]] foo') == 'foo'
         assert clean('[[Bólkur:Kommunur í Føroyum]] foo') == 'foo'
 
-        # lists
+    def test_lists(self):
         assert clean('* 123\n*245\n* 346 * 789') == '123\n245\n346 * 789'
         assert clean('* 123\n** 245') == '123\n245'
 
-        # external links
+    def test_external_links(self):
         assert clean('[http://www.klaksvik.fo Heimasíðan hjá Klaksvíkar kommunu]') \
             == 'Heimasíðan hjá Klaksvíkar kommunu'
 
-        # templates
+    def test_templates(self):
         assert clean('{{Kommunur}}') == ''
+
+    def test_parser_hooks(self):
+        assert clean('foo<ref>link</ref>') == 'foo'
+        assert clean('foo<br>') == 'foo'
+        assert clean('foo<br />') == 'foo'
+        assert clean('E = mc<sup>2</sup>') == 'E = mc'
 
     def test_complex(self):
         assert clean('=== Á [[Borðoy|Borðoynni]] ===') == 'Á Borðoynni'

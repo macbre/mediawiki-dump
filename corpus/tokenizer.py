@@ -30,7 +30,11 @@ def clean(text):
     text = re.sub(r'^\*+\s?', '', text, flags=re.MULTILINE)
 
     # templates
-    text = re.sub(r'{{[^}]+}}', '', text)
+    text = re.sub(r'{{[^}]+}}', '', text)  # {{foo}}
+
+    # parser hooks
+    text = re.sub(r'<[^>]+>[^<]+</[^>]+>', '', text)  # <ref>foo</ref>
+    text = re.sub(r'<[^>]+/?>', '', text)  # <br> / <br />
 
     return text.strip()
 
