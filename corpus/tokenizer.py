@@ -32,6 +32,9 @@ def clean(text):
     # templates
     text = re.sub(r'{{[^}]+}}', '', text)  # {{foo}}
 
+    # tables
+    text = re.sub(r'{\|[^}]+\|}', '', text)  # {|foo..|}
+
     # parser hooks
     text = re.sub(r'<[^>]+>[^<]+</[^>]+>', '', text)  # <ref>foo</ref>
 

@@ -51,6 +51,23 @@ class TestTokenizerClean(TestCase):
         assert clean('foo<br>') == 'foo'
         assert clean('foo<br />') == 'foo'
 
+    def test_tables(self):
+        assert clean("""
+foo
+{| class="wikitable"
+|-
+! 
+! Útflutningur
+! Innflutningur
+|-
+| 9.
+| bar
+| test
+|-
+|}
+bar
+""".strip()) == 'foo\n\nbar'
+
     def test_complex(self):
         assert clean('=== Á [[Borðoy|Borðoynni]] ===') == 'Á Borðoynni'
 
