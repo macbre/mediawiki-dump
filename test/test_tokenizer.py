@@ -165,6 +165,12 @@ class TestTokenizer:
         assert tokenize('Foo&bar') \
             == ['Foo', 'bar']
 
+        # <U+00AD>
+        assert tokenize('Foo\xADbar') \
+            == ['Foo', 'bar']
+        assert tokenize('Foo\u00ADbar') \
+            == ['Foo', 'bar']
+
         assert tokenize('Foo - bar') \
             == ['Foo', 'bar']
 
@@ -176,6 +182,9 @@ class TestTokenizer:
 
         assert tokenize('Foo bar. Test 123') \
             == ['Foo', 'bar', 'Test']
+
+        assert tokenize('pennsylvania}}pennsylvania{{flagicon') \
+            == ['pennsylvania', 'pennsylvania', 'flagicon']
 
         assert tokenize('Klaksvíkar kommuna er næststørsta kommuna í Føroyum.') \
             == ['Klaksvíkar', 'kommuna', 'er', 'næststørsta', 'kommuna', 'í', 'Føroyum']

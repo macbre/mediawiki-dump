@@ -106,7 +106,7 @@ def tokenize(text, filter_func=tokenize_filter):
     text = text.strip()
 
     # tokenize
-    parts = re.split(r'[-–\s/|_&]', text)
+    parts = re.split(r'[-–\s/|_&{}\xAD]', text)
 
     parts = filter(filter_func, parts)
 
