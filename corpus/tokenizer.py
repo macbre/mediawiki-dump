@@ -31,19 +31,46 @@ def clean(text):
     # lists
     text = re.sub(r'^\*+\s?', '', text, flags=re.MULTILINE)
 
-    # templates
-    text = re.sub(r'{{[^}]+}}', ' ', text)  # {{foo}}
-    text = text.replace('{{', '').replace('}}', '')
-
-    # tables
-    text = re.sub(r'{\|[^}]+\|}', '', text)  # {|foo..|}
-
     # parser hooks
     text = re.sub(r'<[^>]+>[^<]+</[^>]+>', ' ', text)  # <ref>foo</ref>
 
     # HTML
     text = re.sub(r'<[^>]+/?>', '', text)  # <br> / <br />
     text = text.replace('&nbsp;', ' ')
+
+    # templates
+    # {{foo}}
+    # {{foo|{{test}}|123}}
+    while '{{' in text:
+        start = text.find('{{')
+        level = 1
+        pos = start + 2
+
+        while pos < len(text):
+            # print('>' + text[pos:pos+2] + '<')
+
+            if text[pos:pos+2] == '{{':
+                # nested template - enter next level
+                level += 1
+                pos += 1
+            elif text[pos:pos+2] == '}}':
+                # nested template - leave this level
+                pos += 1
+                level -= 1
+
+            # template is now completed
+            if level == 0:
+                # print(text, start, pos, text[start:pos+1])
+                text = text[:start] + ' ' + text[pos+1:]
+                break
+
+            # check next character
+            pos += 1
+
+        # print(start, level, pos); break
+
+    # tables
+    text = re.sub(r'{\|[^}]+\|}', '', text)  # {|foo..|}
 
     return text.strip()
 

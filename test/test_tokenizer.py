@@ -42,6 +42,7 @@ class TestTokenizerClean(TestCase):
         assert clean('{{Kommunur}}bar{{test}}test') == 'bar test'  # space is kept
         assert clean('{{Kommunur|foo|bar}}') == ''
         assert clean('{{Kommunur|{{foo}}}}') == ''
+        assert clean('{{Kommunur|{{foo}}|test}}') == ''
         assert clean('[[Theodor W. Adorno|Adorno]]{{·}}[[Roland Barthes|Barthes]]'
                      '{{·}}[[Jean Baudrillard|Baudrillard]]{{·}}[[Georges Bataille|Bataille]]') \
             == 'Adorno Barthes Baudrillard Bataille'
@@ -65,7 +66,7 @@ foo
 ! Innflutningur
 |-
 | 9.
-| bar
+| {{bar}}
 | test
 |-
 |}
@@ -81,6 +82,14 @@ bar
         assert clean("'''Fugloy''', sum hevur fingið navn av tí nógva [[Fuglur|fugli]], "
                      "ið har búleikast, er tann minsta av [[Norðoyar|Norðoyum]]") \
             == 'Fugloy, sum hevur fingið navn av tí nógva fugli, ið har búleikast, er tann minsta av Norðoyum'
+
+        assert clean("""
+foo{{Infobox cyclist
+| birth_date    = {{birth date and age|1987|7|5|df=yes}}
+| height        = {{convert|1,81|m|ftin|abbr=on}}
+| weight        = {{convert|78|kg|lb|abbr=on}}
+}}bar
+""".strip()) == 'foo bar'
 
     def test_from_file(self):
         # https://fo.wikipedia.org/wiki/Klaksv%C3%ADkar_kommuna
