@@ -6,6 +6,6 @@ test:
 	pipenv run pytest
 
 lint:
-	pylint corpus/
+	pylint corpus/ *.py
 
 .PHONY: test
