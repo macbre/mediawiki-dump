@@ -40,7 +40,7 @@ class TestTokenizerClean(TestCase):
         assert clean('{{Kommunur}}') == ''
         assert clean('{{Kommunur}} bar {{test}}') == 'bar'
         assert clean('{{Kommunur|foo|bar}}') == ''
-        assert clean('{{Kommunur|{{foo}}|test}}') == ''
+        assert clean('{{Kommunur|{{foo}}}}') == ''
 
     def test_parser_hooks(self):
         assert clean('foo<ref>link</ref>') == 'foo'
@@ -139,8 +139,8 @@ class TestTokenizer:
         assert tokenize('Foo bar 1 and 5') \
             == ['Foo', 'bar', 'and']
 
-        assert tokenize('Foo bar 1 * 5') \
-            == ['Foo', 'bar']
+        assert tokenize('Foo bar 2 + 2 = four') \
+            == ['Foo', 'bar', 'four']
 
         assert tokenize('Foo bar. Test 123') \
             == ['Foo', 'bar', 'Test']

@@ -31,6 +31,7 @@ def clean(text):
 
     # templates
     text = re.sub(r'{{[^}]+}}', '', text)  # {{foo}}
+    text = text.replace('{{', '').replace('}}', '')
 
     # tables
     text = re.sub(r'{\|[^}]+\|}', '', text)  # {|foo..|}
@@ -69,7 +70,7 @@ def tokenize(text, filter_func=tokenize_filter):
     :rtype: list[str]
     """
     # clean up the text
-    text = re.sub(r'[?.,:;!()"]', '', text)  # remove noise
+    text = re.sub(r'[?.,:;!()=+"]', '', text)  # remove noise
 
     text = text.strip()
 
