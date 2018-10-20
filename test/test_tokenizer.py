@@ -5,44 +5,92 @@ from corpus.tokenizer import clean, tokenize, tokenize_filter
 
 class TestTokenizerClean(TestCase):
 
-    def test(self):
+    def test_basic(self):
         assert clean('Foo bar.') == 'Foo bar.'
         assert clean('foo bar') == 'foo bar'
 
-        # basic formatting
         assert clean("''italic''") == 'italic'
         assert clean("'''bold'''") == 'bold'
 
-        # headings
+    def test_headings(self):
         assert clean('==foo==') == 'foo'
         assert clean('===Foo===') == 'Foo'
         assert clean('=== Foo ===') == 'Foo'
         assert clean('== Brot úr søguni hjá Klaksvíkar kommunu ==') \
             == 'Brot úr søguni hjá Klaksvíkar kommunu'
 
-        # links
+    def test_links(self):
         assert clean('[[foo]] bar') == 'foo bar'
         assert clean('[[foo]]s bar') == 'foos bar'
         assert clean('av [[Norðoyar|Norðuroyggjum]].') == 'av Norðuroyggjum.'
         assert clean('* [[Svínoy]]') == 'Svínoy'
         assert clean('[[File:Kommunur í Føroyum]] foo') == 'foo'
         assert clean('[[Bólkur:Kommunur í Føroyum]] foo') == 'foo'
+        assert clean('[[bar]] test [[Bólkur:Kommunur í Føroyum]] foo') == 'bar test  foo'
 
-        # lists
+    def test_lists(self):
         assert clean('* 123\n*245\n* 346 * 789') == '123\n245\n346 * 789'
         assert clean('* 123\n** 245') == '123\n245'
 
-        # external links
+    def test_external_links(self):
         assert clean('[http://www.klaksvik.fo Heimasíðan hjá Klaksvíkar kommunu]') \
             == 'Heimasíðan hjá Klaksvíkar kommunu'
 
-        # templates
+    def test_templates(self):
         assert clean('{{Kommunur}}') == ''
+        assert clean('{{Kommunur}} bar {{test}}') == 'bar'
+        assert clean('{{Kommunur}}bar{{test}}test') == 'bar test'  # space is kept
+        assert clean('{{Kommunur|foo|bar}}') == ''
+        assert clean('{{Kommunur|{{foo}}}}') == ''
+        assert clean('{{Kommunur|{{foo}}|test}}') == ''
+        assert clean('{{Kommunur|{{foo}}|test') == '{{Kommunur|{{foo}}|test'  # unbalanced template wikitext
+        assert clean('[[Theodor W. Adorno|Adorno]]{{·}}[[Roland Barthes|Barthes]]'
+                     '{{·}}[[Jean Baudrillard|Baudrillard]]{{·}}[[Georges Bataille|Bataille]]') \
+            == 'Adorno Barthes Baudrillard Bataille'
+
+    def test_parser_hooks(self):
+        assert clean('foo<ref>link</ref>') == 'foo'
+        assert clean('E = mc<sup>2</sup>') == 'E = mc'
+
+    def test_html(self):
+        assert clean('foo&nbsp;bar') == 'foo bar'
+        assert clean('foo<br>') == 'foo'
+        assert clean('foo<br />') == 'foo'
+
+    def test_tables(self):
+        assert clean("""
+foo
+{| class="wikitable"
+|-
+! 
+! Útflutningur
+! Innflutningur
+|-
+| 9.
+| {{bar}}
+| test
+|-
+|}
+bar
+""".strip()) == 'foo\n\nbar'
 
     def test_complex(self):
         assert clean('=== Á [[Borðoy|Borðoynni]] ===') == 'Á Borðoynni'
+
         assert clean("''' Klaksvíkar kommuna''' er næststørsta kommuna í [[Føroyar|Føroyum]].") \
             == 'Klaksvíkar kommuna er næststørsta kommuna í Føroyum.'
+
+        assert clean("'''Fugloy''', sum hevur fingið navn av tí nógva [[Fuglur|fugli]], "
+                     "ið har búleikast, er tann minsta av [[Norðoyar|Norðoyum]]") \
+            == 'Fugloy, sum hevur fingið navn av tí nógva fugli, ið har búleikast, er tann minsta av Norðoyum'
+
+        assert clean("""
+foo{{Infobox cyclist
+| birth_date    = {{birth date and age|1987|7|5|df=yes}}
+| height        = {{convert|1,81|m|ftin|abbr=on}}
+| weight        = {{convert|78|kg|lb|abbr=on}}
+}}bar
+""".strip()) == 'foo bar'
 
     def test_from_file(self):
         # https://fo.wikipedia.org/wiki/Klaksv%C3%ADkar_kommuna
@@ -67,6 +115,9 @@ class TestTokenizer:
 
     def test(self):
         assert tokenize('Foo bar') \
+            == ['Foo', 'bar']
+
+        assert tokenize('Foo  bar') \
             == ['Foo', 'bar']
 
         assert tokenize('Foo bar.') \
@@ -99,17 +150,41 @@ class TestTokenizer:
         assert tokenize('Foo-bar') \
             == ['Foo', 'bar']
 
+        assert tokenize('Foo–bar') \
+            == ['Foo', 'bar']
+
+        assert tokenize('Foo/bar') \
+            == ['Foo', 'bar']
+
+        assert tokenize('Foo|bar') \
+            == ['Foo', 'bar']
+
+        assert tokenize('Foo_bar') \
+            == ['Foo', 'bar']
+
+        assert tokenize('Foo&bar') \
+            == ['Foo', 'bar']
+
+        # <U+00AD>
+        assert tokenize('Foo\xADbar') \
+            == ['Foo', 'bar']
+        assert tokenize('Foo\u00ADbar') \
+            == ['Foo', 'bar']
+
         assert tokenize('Foo - bar') \
             == ['Foo', 'bar']
 
         assert tokenize('Foo bar 1 and 5') \
             == ['Foo', 'bar', 'and']
 
-        assert tokenize('Foo bar 1 * 5') \
-            == ['Foo', 'bar']
+        assert tokenize('Foo bar 2 + 2 = four') \
+            == ['Foo', 'bar', 'four']
 
         assert tokenize('Foo bar. Test 123') \
             == ['Foo', 'bar', 'Test']
+
+        assert tokenize('pennsylvania}}pennsylvania{{flagicon') \
+            == ['pennsylvania', 'pennsylvania', 'flagicon']
 
         assert tokenize('Klaksvíkar kommuna er næststørsta kommuna í Føroyum.') \
             == ['Klaksvíkar', 'kommuna', 'er', 'næststørsta', 'kommuna', 'í', 'Føroyum']
