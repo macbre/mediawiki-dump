@@ -23,6 +23,8 @@ def clean(text):
     text = re.sub(r'\[\[([^|\]]+)\]\]', '\\1', text)  # [[a]] -> a
     text = re.sub(r'\[\[[^|]+\|([^\]]+)\]\]', '\\1', text)  # [[a|b]] -> b
 
+    text = text.replace('[[', '').replace(']]', '')
+
     # external links
     text = re.sub(r'\[http[^\s]+ ([^\]]+)\]', '\\1', text)  # [[http://example.com foo]] -> foo
 
@@ -70,12 +72,12 @@ def tokenize(text, filter_func=tokenize_filter):
     :rtype: list[str]
     """
     # clean up the text
-    text = re.sub(r'[?.,:;!()=+"]', '', text)  # remove noise
+    text = re.sub(r'[?.,:;!()=+"]', ' ', text)  # remove noise
 
     text = text.strip()
 
     # tokenize
-    parts = re.split(r'[-\s]', text)
+    parts = re.split(r'[-–\s/|_&]', text)
 
     parts = filter(filter_func, parts)
 
