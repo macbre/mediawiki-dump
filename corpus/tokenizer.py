@@ -67,7 +67,9 @@ def clean(text):
             # check next character
             pos += 1
 
-        # print(start, level, pos); break
+        # the template is not well balanced, leave the endless loop
+        if level != 0:
+            break
 
     # tables
     text = re.sub(r'{\|[^}]+\|}', '', text)  # {|foo..|}

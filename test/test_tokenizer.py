@@ -43,6 +43,7 @@ class TestTokenizerClean(TestCase):
         assert clean('{{Kommunur|foo|bar}}') == ''
         assert clean('{{Kommunur|{{foo}}}}') == ''
         assert clean('{{Kommunur|{{foo}}|test}}') == ''
+        assert clean('{{Kommunur|{{foo}}|test') == '{{Kommunur|{{foo}}|test'  # unbalanced template wikitext
         assert clean('[[Theodor W. Adorno|Adorno]]{{·}}[[Roland Barthes|Barthes]]'
                      '{{·}}[[Jean Baudrillard|Baudrillard]]{{·}}[[Georges Bataille|Bataille]]') \
             == 'Adorno Barthes Baudrillard Bataille'
