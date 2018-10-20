@@ -26,6 +26,7 @@ class TestTokenizerClean(TestCase):
         assert clean('* [[Svínoy]]') == 'Svínoy'
         assert clean('[[File:Kommunur í Føroyum]] foo') == 'foo'
         assert clean('[[Bólkur:Kommunur í Føroyum]] foo') == 'foo'
+        assert clean('[[bar]] test [[Bólkur:Kommunur í Føroyum]] foo') == 'bar test  foo'
 
     def test_lists(self):
         assert clean('* 123\n*245\n* 346 * 789') == '123\n245\n346 * 789'
@@ -37,17 +38,28 @@ class TestTokenizerClean(TestCase):
 
     def test_templates(self):
         assert clean('{{Kommunur}}') == ''
+        assert clean('{{Kommunur}} bar {{test}}') == 'bar'
+        assert clean('{{Kommunur|foo|bar}}') == ''
+        assert clean('{{Kommunur|{{foo}}|test}}') == ''
 
     def test_parser_hooks(self):
         assert clean('foo<ref>link</ref>') == 'foo'
+        assert clean('E = mc<sup>2</sup>') == 'E = mc'
+
+    def test_html(self):
+        assert clean('foo&nbsp;bar') == 'foo bar'
         assert clean('foo<br>') == 'foo'
         assert clean('foo<br />') == 'foo'
-        assert clean('E = mc<sup>2</sup>') == 'E = mc'
 
     def test_complex(self):
         assert clean('=== Á [[Borðoy|Borðoynni]] ===') == 'Á Borðoynni'
+
         assert clean("''' Klaksvíkar kommuna''' er næststørsta kommuna í [[Føroyar|Føroyum]].") \
             == 'Klaksvíkar kommuna er næststørsta kommuna í Føroyum.'
+
+        assert clean("'''Fugloy''', sum hevur fingið navn av tí nógva [[Fuglur|fugli]], "
+                     "ið har búleikast, er tann minsta av [[Norðoyar|Norðoyum]]") \
+            == 'Fugloy, sum hevur fingið navn av tí nógva fugli, ið har búleikast, er tann minsta av Norðoyum'
 
     def test_from_file(self):
         # https://fo.wikipedia.org/wiki/Klaksv%C3%ADkar_kommuna

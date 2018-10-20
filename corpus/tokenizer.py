@@ -17,7 +17,7 @@ def clean(text):
                   text, flags=re.MULTILINE)  # == a == -> a
 
     # files and other links with namespaces
-    text = re.sub(r'\[\[[^:]+:[^\]]+\]\]', '', text)  # [[foo:b]] -> ''
+    text = re.sub(r'\[\[[^:\]]+:[^\]]+\]\]', '', text)  # [[foo:b]] -> ''
 
     # local links
     text = re.sub(r'\[\[([^|\]]+)\]\]', '\\1', text)  # [[a]] -> a
@@ -34,7 +34,10 @@ def clean(text):
 
     # parser hooks
     text = re.sub(r'<[^>]+>[^<]+</[^>]+>', '', text)  # <ref>foo</ref>
+
+    # HTML
     text = re.sub(r'<[^>]+/?>', '', text)  # <br> / <br />
+    text = text.replace('&nbsp;', ' ')
 
     return text.strip()
 
