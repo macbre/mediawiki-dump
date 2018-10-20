@@ -32,14 +32,14 @@ def clean(text):
     text = re.sub(r'^\*+\s?', '', text, flags=re.MULTILINE)
 
     # templates
-    text = re.sub(r'{{[^}]+}}', '', text)  # {{foo}}
+    text = re.sub(r'{{[^}]+}}', ' ', text)  # {{foo}}
     text = text.replace('{{', '').replace('}}', '')
 
     # tables
     text = re.sub(r'{\|[^}]+\|}', '', text)  # {|foo..|}
 
     # parser hooks
-    text = re.sub(r'<[^>]+>[^<]+</[^>]+>', '', text)  # <ref>foo</ref>
+    text = re.sub(r'<[^>]+>[^<]+</[^>]+>', ' ', text)  # <ref>foo</ref>
 
     # HTML
     text = re.sub(r'<[^>]+/?>', '', text)  # <br> / <br />

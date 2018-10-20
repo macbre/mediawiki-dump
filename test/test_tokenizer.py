@@ -39,8 +39,12 @@ class TestTokenizerClean(TestCase):
     def test_templates(self):
         assert clean('{{Kommunur}}') == ''
         assert clean('{{Kommunur}} bar {{test}}') == 'bar'
+        assert clean('{{Kommunur}}bar{{test}}test') == 'bar test'  # space is kept
         assert clean('{{Kommunur|foo|bar}}') == ''
         assert clean('{{Kommunur|{{foo}}}}') == ''
+        assert clean('[[Theodor W. Adorno|Adorno]]{{·}}[[Roland Barthes|Barthes]]'
+                     '{{·}}[[Jean Baudrillard|Baudrillard]]{{·}}[[Georges Bataille|Bataille]]') \
+            == 'Adorno Barthes Baudrillard Bataille'
 
     def test_parser_hooks(self):
         assert clean('foo<ref>link</ref>') == 'foo'
@@ -101,6 +105,9 @@ class TestTokenizer:
 
     def test(self):
         assert tokenize('Foo bar') \
+            == ['Foo', 'bar']
+
+        assert tokenize('Foo  bar') \
             == ['Foo', 'bar']
 
         assert tokenize('Foo bar.') \
