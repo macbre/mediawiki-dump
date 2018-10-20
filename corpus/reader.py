@@ -47,7 +47,7 @@ class DumpReader:
             revision = page.find('dump:revision', self.NAMESPACES)
             content = revision.find('dump:text', self.NAMESPACES).text
 
-            self.logger.info('Page #%d: %s', page_id, title)
+            self.logger.debug('Page #%d: %s', page_id, title)
 
             if self.filter_by_namespace(namespace):
                 yield namespace, page_id, title, content
