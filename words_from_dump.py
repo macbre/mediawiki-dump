@@ -39,6 +39,10 @@ def words_from_dump(wiki):
         # add long words (and filter out words with X)
         words_from_article = [word for word in article_words if len(word) > 10 and 'x' not in word]
 
+        if 'filmsleikstjóririthøvundurframleiðarisjónleikari' in words_from_article:
+            logger.info('Word found in %s', title)
+            print(content)
+
         long_words += words_from_article
 
         # print('---')

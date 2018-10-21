@@ -65,6 +65,7 @@ class TestTokenizerClean(TestCase):
         assert clean('foo&nbsp;bar') == 'foo bar'
         assert clean('foo<br>') == 'foo'
         assert clean('foo<br />') == 'foo'
+        assert clean('foo<br />bar') == 'foo bar'
 
     def test_tables(self):
         assert clean("""
@@ -100,6 +101,26 @@ foo{{Infobox cyclist
 | weight        = {{convert|78|kg|lb|abbr=on}}
 }}bar
 """.strip()) == 'foo bar'
+
+        assert clean("""
+{{Infobox person
+| name = Wes Craven
+| image = Wes Craven 2010.jpg
+| image_size = 
+| caption = Wes Craven í 2010
+| birth_name = Wesley Earl Craven
+| birth_date = {{birth date|1939|08|02|df=yes}}
+| birth_place = Cleveland, [[Ohio]], [[USA]]
+| death_date = {{death date and age|2015|08|30|1939|08|02|df=yes}}
+| death_place = [[Los Angeles]], [[California]], [[USA]]
+| death_cause = Heilakrabbi
+| occupation  = Filmsleikstjóri<br />Rithøvundur<br />Framleiðari<br />Sjónleikari
+| years_active = 1971–2015
+| spouse = {{marriage|Bonnie Broecker|1964|1969|reason=skild}}<br />{{marriage|[[Mimi Craven]]|1984|1987|reason=skild}}<br />{{marriage|Iya Labunka|2004|2015|reason=deyða sín}}
+| website = {{URL|http://www.wescraven.com}}
+| children = 2, harímillum Jonathan Craven
+}}
+""".strip()) == ''
 
     def test_from_file(self):
         # https://fo.wikipedia.org/wiki/Klaksv%C3%ADkar_kommuna

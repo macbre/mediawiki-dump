@@ -24,20 +24,15 @@ Shows the longest words taken from the dump:
 
 ```
 1 llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogoch - 58
-2 filmsleikstjóririthøvundurframleiðarisjónleikari - 48
-3 southernplayalisticadillacmuzik - 31
-4 krabbameinsgranskingarstovnurin - 31
-5 samvinnufelagiðsamvinnufelagnum - 31
-6 barnabókavirðislønavinnararnar - 30
-7 klassikaraserfrøðingurpuncheur - 30
-8 dokumentarsjónvarpssendingini - 29
-9 puncheursprintariserfrøðingur - 29
-10 einstaklingaítróttargreinunum - 29
-11 bókmentakritikaraheiðurslønir - 29
-12 norðurlandameistarakappingini - 29
-13 vegsúkklukappingarmeistaranum - 29
-14 sjónvarpsundirhaldssendingini - 29
-15 fiskiveiðueftirlitstænastuna - 28
+2 samvinnufelagiðsamvinnufelagnum - 31
+3 krabbameinsgranskingarstovnurin - 31
+4 southernplayalisticadillacmuzik - 31
+5 barnabókavirðislønavinnararnar - 30
+6 norðurlandameistarakappingini - 29
+7 sjónvarpsundirhaldssendingini - 29
+8 bókmentakritikaraheiðurslønir - 29
+9 einstaklingaítróttargreinunum - 29
+10 vegsúkklukappingarmeistaranum - 29
 ...
 ```
 
