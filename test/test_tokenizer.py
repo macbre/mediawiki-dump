@@ -36,6 +36,15 @@ class TestTokenizerClean(TestCase):
         assert clean('[http://www.klaksvik.fo Heimasíðan hjá Klaksvíkar kommunu]') \
             == 'Heimasíðan hjá Klaksvíkar kommunu'
 
+    def test_remove_external_links(self):
+        assert clean('Facebook - https://www.facebook.com/fridikarlssonjustesen?fb_dtsg_ag='
+                     'AdziAVqHQ8WsgyLnRRbFgiD48LLV3ZblI2r6ejYM1ymo-g%3AAdxJZEj_FFlDDrUGSnYE'
+                     'vseo2SqjBZo3wWNKBausddsffQ link') \
+            == 'Facebook -  link'
+
+        assert clean('http://www.klaksvik.fo Heimasíðan hjá Klaksvíkar kommunu') \
+            == 'Heimasíðan hjá Klaksvíkar kommunu'
+
     def test_templates(self):
         assert clean('{{Kommunur}}') == ''
         assert clean('{{Kommunur}} bar {{test}}') == 'bar'
