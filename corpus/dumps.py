@@ -51,7 +51,7 @@ class BaseDump:
 
     def fetch(self):
         """
-        :rtype: bytes
+        :rtype: _io.TextIOWrapper
         """
         url = self.get_url()
 
@@ -59,22 +59,24 @@ class BaseDump:
         self.logger.info("Checking %s cache file...", cache_filename)
 
         # check cache
-        if isfile(cache_filename):
-            self.logger.info("Cache hit!")
-            with open(cache_filename, 'rb') as file:
-                return file.read()
+        if not isfile(cache_filename):
+            # fetch the resource
+            self.logger.info('Fetching %s dump from <%s>...', self.wiki, url)
+            res = self.http.get(url, stream=True)
+            self.logger.info('HTTP %s (%d kB fetched)', res.status_code, len(res.content) / 1024)
 
-        # fetch the resource
-        self.logger.info('Fetching %s dump from <%s>...', self.wiki, url)
-        res = self.http.get(url)
-        self.logger.info('HTTP %s (%d kB fetched)', res.status_code, len(res.content) / 1024)
+            # read the response as a stream and put it into cache file
+            # http://docs.python-requests.org/en/master/user/advanced/#body-content-workflow
+            with res:
+                with open(cache_filename, 'wb') as file:
+                    for chunk in res.iter_content():
+                        file.write(chunk)
 
-        # set the cache
-        with open(cache_filename, 'wb') as file:
-            file.write(res.content)
-            self.logger.info("Cache set")
+                self.logger.info("Cache set")
+        else:
+            self.logger.info("Reading from cache")
 
-        return res.content
+        return open(cache_filename, 'rb')
 
     def get_content(self):
         """
@@ -95,7 +97,11 @@ class WikipediaDump(BaseDump):
         """
         :rtype: str
         """
-        return bz2.decompress(self.fetch())
+        # https://docs.python.org/2/library/bz2.html#bz2.BZ2Decompressor
+        decompressor = bz2.BZ2Decompressor()
+
+        for chunk in self.fetch():
+            yield decompressor.decompress(chunk)
 
 
 class WikiaDump(BaseDump):

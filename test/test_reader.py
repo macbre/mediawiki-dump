@@ -1,17 +1,16 @@
-from corpus.dumps import BaseDump
+from corpus.dumps import WikipediaDump
 from corpus.reader import DumpReader
 
 
-class DumpFixture(BaseDump):
+class DumpFixture(WikipediaDump):
     def __init__(self):
         super(DumpFixture, self).__init__('')
 
     def get_url(self):
         pass
 
-    def get_content(self):
-        with open('test/fixtures/dump.xml', 'rt') as f:
-            return f.read()
+    def fetch(self):
+        return open('test/fixtures/dump.xml.bz2', 'rb')
 
 
 def test_with_fixture():

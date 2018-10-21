@@ -13,7 +13,6 @@ class DumpReader:
     This class uses provided BaseDump instance to read and parse MediaWiki's XML dump
 
     https://www.mediawiki.org/wiki/Help:Export#Export_format
-    https://docs.python.org/2/library/xml.etree.elementtree.html#parsing-xml
     """
     NAMESPACES = {
         'dump': 'http://www.mediawiki.org/xml/export-0.10/'
@@ -37,7 +36,8 @@ class DumpReader:
         """
         self.logger.info('Parsing XML dump...')
 
-        root = ElementTree.fromstring(dump.get_content())
+        # https://docs.python.org/2/library/xml.etree.elementtree.html#parsing-xml
+        root = ElementTree.fromstringlist(dump.get_content())
 
         for page in root.findall('dump:page', self.NAMESPACES):
             title = page.find('dump:title', self.NAMESPACES).text
