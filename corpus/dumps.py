@@ -15,8 +15,6 @@ class BaseDump:
     """
     A generic dump class. Wikipedia or Wikia dumps
     should have a separate class that customizes get_url() method
-
-    TODO: support streaming of the decompressed content
     """
 
     def __init__(self, wiki):
@@ -51,7 +49,7 @@ class BaseDump:
 
     def fetch(self):
         """
-        :rtype: bytes
+        :rtype: _io.TextIOWrapper
         """
         url = self.get_url()
 
@@ -59,26 +57,34 @@ class BaseDump:
         self.logger.info("Checking %s cache file...", cache_filename)
 
         # check cache
-        if isfile(cache_filename):
-            self.logger.info("Cache hit!")
-            with open(cache_filename, 'rb') as file:
-                return file.read()
+        if not isfile(cache_filename):
+            # fetch the resource
+            self.logger.info('Fetching %s dump from <%s>...', self.wiki, url)
+            response = self.http.get(url, stream=True)
+            self.logger.info('HTTP %s (%d kB fetched)',
+                             response.status_code, len(response.content) / 1024)
 
-        # fetch the resource
-        self.logger.info('Fetching %s dump from <%s>...', self.wiki, url)
-        res = self.http.get(url)
-        self.logger.info('HTTP %s (%d kB fetched)', res.status_code, len(res.content) / 1024)
+            # read the response as a stream and put it into cache file
+            # http://docs.python-requests.org/en/master/user/advanced/#body-content-workflow
+            #
+            # before using a stream reading and parsing of Faroese dump made the words_from_dump.py
+            # script take ~460 MB of memory, after the change - ~140 MB
+            with response:
+                with open(cache_filename, 'wb') as file:
+                    for chunk in response.iter_content():
+                        file.write(chunk)
 
-        # set the cache
-        with open(cache_filename, 'wb') as file:
-            file.write(res.content)
-            self.logger.info("Cache set")
+                response.close()
+                self.logger.info("Cache set")
+        else:
+            self.logger.info("Reading from cache")
 
-        return res.content
+        # return a stream of compressed data from the cache file
+        return open(cache_filename, 'rb')
 
     def get_content(self):
         """
-        :rtype: str
+        :rtype: list[str]
         """
         raise NotImplementedError('fetch method needs to be implemented')
 
@@ -93,9 +99,16 @@ class WikipediaDump(BaseDump):
 
     def get_content(self):
         """
-        :rtype: str
+        :rtype: list[str]
         """
-        return bz2.decompress(self.fetch())
+        # https://docs.python.org/3.6/library/bz2.html#bz2.BZ2Decompressor
+        decompressor = bz2.BZ2Decompressor()
+        handler = self.fetch()
+
+        for chunk in handler:
+            yield decompressor.decompress(chunk)
+
+        handler.close()
 
 
 class WikiaDump(BaseDump):
@@ -113,6 +126,6 @@ class WikiaDump(BaseDump):
 
     def get_content(self):
         """
-        :rtype: str
+        :rtype: list[str]
         """
         raise NotImplementedError('To be implemented')
