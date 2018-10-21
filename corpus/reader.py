@@ -47,6 +47,11 @@ class DumpReader:
             revision = page.find('dump:revision', self.NAMESPACES)
             content = revision.find('dump:text', self.NAMESPACES).text
 
+            if content is None:
+                # https://fo.wikipedia.org/wiki/Kjak:L%C3%ADvfr%C3%B8%C3%B0i
+                self.logger.warning('Page #%d: %s is empty', page_id, title)
+                continue
+
             self.logger.debug('Page #%d: %s', page_id, title)
 
             if self.filter_by_namespace(namespace):

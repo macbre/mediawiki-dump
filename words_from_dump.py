@@ -1,6 +1,7 @@
 """
 This script take Faroese Wikipedia dump and generates a list of unique words that it contains
 """
+import sys
 import logging
 
 from corpus.dumps import WikipediaDump
@@ -15,6 +16,7 @@ def words_from_dump(wiki):
     :type wiki str
     """
     logger = logging.getLogger('words_from_dump')
+    logger.info('Processing dump of "%s" wiki...', wiki)
 
     dump = WikipediaDump(wiki)
     pages = DumpReaderArticles().read(dump)
@@ -57,4 +59,4 @@ def words_from_dump(wiki):
 
 
 if __name__ == "__main__":
-    words_from_dump(wiki='fo')
+    words_from_dump(wiki=sys.argv[1] if len(sys.argv) > 1 else 'fo')
