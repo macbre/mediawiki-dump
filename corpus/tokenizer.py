@@ -27,6 +27,7 @@ def clean(text):
 
     # external links
     text = re.sub(r'\[http[^\s]+ ([^\]]+)\]', '\\1', text)  # [[http://example.com foo]] -> foo
+    text = re.sub(r'https?://[^\s]+', '', text)  # remove http://example.com
 
     # lists
     text = re.sub(r'^\*+\s?', '', text, flags=re.MULTILINE)

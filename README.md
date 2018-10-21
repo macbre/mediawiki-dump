@@ -16,6 +16,31 @@ This project uses `pipenv`. [How to install `pipenv`](https://pipenv.readthedocs
 * [MediaWiki XML dump format](https://www.mediawiki.org/wiki/Help:Export#Export_format)
 
 
+## Scripts
+
+### `words_from_dump.py`
+
+Shows the longest words taken from the dump:
+
+```
+1 llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogoch - 58
+2 filmsleikstjóririthøvundurframleiðarisjónleikari - 48
+3 southernplayalisticadillacmuzik - 31
+4 krabbameinsgranskingarstovnurin - 31
+5 samvinnufelagiðsamvinnufelagnum - 31
+6 barnabókavirðislønavinnararnar - 30
+7 klassikaraserfrøðingurpuncheur - 30
+8 dokumentarsjónvarpssendingini - 29
+9 puncheursprintariserfrøðingur - 29
+10 einstaklingaítróttargreinunum - 29
+11 bókmentakritikaraheiðurslønir - 29
+12 norðurlandameistarakappingini - 29
+13 vegsúkklukappingarmeistaranum - 29
+14 sjónvarpsundirhaldssendingini - 29
+15 fiskiveiðueftirlitstænastuna - 28
+...
+```
+
 ## Features
 
 ### Tokenizer
