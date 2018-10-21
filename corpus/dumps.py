@@ -68,7 +68,7 @@ class BaseDump:
             # http://docs.python-requests.org/en/master/user/advanced/#body-content-workflow
             #
             # before using a stream reading and parsing of Faroese dump made the words_from_dump.py
-            # script take ~460 MB of memory, after the change - ~140 MB
+            # script took ~460 MB of memory, after the change - ~60 MB
             with response:
                 with open(cache_filename, 'wb') as file:
                     for chunk in response.iter_content():

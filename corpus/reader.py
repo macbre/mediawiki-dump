@@ -35,13 +35,14 @@ class DumpHandler(sax.ContentHandler):
     # https://docs.python.org/3.6/library/xml.sax.handler.html#xml.sax.handler.ContentHandler
 
     # pylint: disable=too-many-instance-attributes
-    def __init__(self, pages):
+    def __init__(self):
         """
         :type pages list
         """
         super(DumpHandler, self).__init__()
         self.logger = logging.getLogger(self.__class__.__name__)
-        self.pages = pages
+
+        self.pages = []
 
         # parser state, are we inside <page> or <revision> tag?
         self.in_page = False
@@ -117,6 +118,15 @@ class DumpHandler(sax.ContentHandler):
 
         self.tag_content += content
 
+    def get_pages(self):
+        """
+        Used by DumpReader to yield pages as we parse the XML dump
+        """
+        for page in self.pages:
+            yield page
+
+        self.pages = []
+
 
 class DumpReader:
     """
@@ -136,15 +146,14 @@ class DumpReader:
     def read(self, dump):
         """
         :type dump corpus.dumps.BaseDump
-        :rtype list[str]
+        :rtype: list
         """
         self.logger.info('Parsing XML dump...')
 
         # https://docs.python.org/2/library/xml.etree.elementtree.html#parsing-xml
 
         # https: // docs.python.org / 3.6 / library / xml.sax.html?highlight = sax  # xml.sax.parse
-        pages = []
-        handler = DumpHandler(pages)
+        handler = DumpHandler()
 
         parser = sax.make_parser()
         parser.setContentHandler(handler)
@@ -152,16 +161,17 @@ class DumpReader:
         for chunk in dump.get_content():
             parser.feed(chunk)
 
-        for page in pages:
-            (namespace, page_id, title, content) = page
+            # yield pages as we go through XML stream
+            for page in handler.get_pages():
+                (namespace, page_id, title, content) = page
 
-            if content == '':
-                # https://fo.wikipedia.org/wiki/Kjak:L%C3%ADvfr%C3%B8%C3%B0i
-                self.logger.warning('Page #%d: %s is empty', page_id, title)
-                continue
+                if content == '':
+                    # https://fo.wikipedia.org/wiki/Kjak:L%C3%ADvfr%C3%B8%C3%B0i
+                    self.logger.warning('Page #%d: %s is empty', page_id, title)
+                    continue
 
-            if self.filter_by_namespace(namespace):
-                yield namespace, page_id, title, content
+                if self.filter_by_namespace(namespace):
+                    yield namespace, page_id, title, content
 
 
 class DumpReaderArticles(DumpReader):
