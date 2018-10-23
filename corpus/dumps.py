@@ -9,8 +9,16 @@ from os.path import isfile
 from tempfile import gettempdir
 
 import requests
+from requests.exceptions import HTTPError
 
 from py7zlib import Archive7z
+
+
+class DumpError(Exception):
+    """
+    Generic exception class
+    """
+    pass
 
 
 class BaseDump:
@@ -68,7 +76,12 @@ class BaseDump:
                              response.status_code, len(response.content) / 1024)
 
             # raise an exception and do not set a cache entry
-            response.raise_for_status()
+            try:
+                response.raise_for_status()
+            except HTTPError as ex:
+                self.logger.error('Failed to fetch a dump', exc_info=True)
+                raise DumpError('Failed to fetch a dump, request ended with HTTP {}'.
+                                format(ex.response.status_code))
 
             # read the response as a stream and put it into cache file
             # http://docs.python-requests.org/en/master/user/advanced/#body-content-workflow
