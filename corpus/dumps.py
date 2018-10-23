@@ -67,6 +67,9 @@ class BaseDump:
             self.logger.info('HTTP %s (%d kB fetched)',
                              response.status_code, len(response.content) / 1024)
 
+            # raise an exception and do not set a cache entry
+            response.raise_for_status()
+
             # read the response as a stream and put it into cache file
             # http://docs.python-requests.org/en/master/user/advanced/#body-content-workflow
             #
