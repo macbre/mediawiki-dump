@@ -9,6 +9,7 @@ pytest = "==3.9.2"
 
 [packages]
 requests = "*"
+pylzma = "*"
 
 [requires]
 python_version = "3.6"

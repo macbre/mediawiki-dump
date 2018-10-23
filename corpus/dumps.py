@@ -10,6 +10,8 @@ from tempfile import gettempdir
 
 import requests
 
+from py7zlib import Archive7z
+
 
 class BaseDump:
     """
@@ -114,8 +116,6 @@ class WikiaDump(BaseDump):
     Class for fetching Wikia dumps
 
     https://community.wikia.com/wiki/Help:Database_download
-
-    TODO: add 7zip archive support
     """
     def get_url(self):
         # https://muppet.wikia.com/wiki/Special:Statistics
@@ -126,4 +126,13 @@ class WikiaDump(BaseDump):
         """
         :rtype: list[str]
         """
-        raise NotImplementedError('To be implemented')
+        # https://github.com/fancycode/pylzma/blob/master/tests/test_7zfiles.py
+        # https://github.com/fancycode/pylzma/blob/master/doc/USAGE.md
+        archive = Archive7z(self.fetch())
+
+        file = archive.getnames()[0]
+        self.logger.info('Reading %s file from dump', file)
+
+        archive_entry = archive.getmember(file)
+
+        yield archive_entry.read()
