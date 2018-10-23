@@ -103,12 +103,10 @@ class WikipediaDump(BaseDump):
         """
         # https://docs.python.org/3.6/library/bz2.html#bz2.BZ2Decompressor
         decompressor = bz2.BZ2Decompressor()
-        handler = self.fetch()
 
-        for chunk in handler:
-            yield decompressor.decompress(chunk)
-
-        handler.close()
+        with self.fetch() as content:
+            for chunk in content:
+                yield decompressor.decompress(chunk)
 
 
 class WikiaDump(BaseDump):
