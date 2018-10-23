@@ -5,7 +5,7 @@ name = "pypi"
 
 [dev-packages]
 pylint = "*"
-pytest = "*"
+pytest = "==3.9.2"
 
 [packages]
 requests = "*"
