@@ -83,7 +83,7 @@ from corpus.reader import DumpReaderArticles
 dump = WikipediaDump('fo')
 pages = DumpReaderArticles().read(dump)
 
-[title for _, _, title, _ in pages][:25]
+print([title for _, _, title, _ in pages][:25])
 ```
 
 Will give you:
@@ -96,4 +96,31 @@ INFO:WikipediaDump:HTTP 200 (14105 kB fetched)
 INFO:WikipediaDump:Cache set
 ...
 ['WIKIng', 'Føroyar', 'Borðoy', 'Eysturoy', 'Fugloy', 'Forsíða', 'Løgmenn í Føroyum', 'GNU Free Documentation License', 'GFDL', 'Opið innihald', 'Wikipedia', 'Alfrøði', '2004', '20. juni', 'WikiWiki', 'Wiki', 'Danmark', '21. juni', '22. juni', '23. juni', 'Lívfrøði', '24. juni', '25. juni', '26. juni', '27. juni']
+```
+
+### Reading Wikia's dumps
+
+ ```python
+import logging; logging.basicConfig(level=logging.INFO)
+
+from corpus.dumps import WikiaDump
+from corpus.reader import DumpReaderArticles
+
+dump = WikiaDump('plnordycka')
+pages = DumpReaderArticles().read(dump)
+
+print([title for _, _, title, _ in pages][:25])
+```
+
+Will give you:
+
+```
+INFO:DumpReaderArticles:Parsing XML dump...
+INFO:WikiaDump:Checking /tmp/wikicorpus_f7dd3b75c5965ee10ae5fe4643fb806b.7z cache file...
+INFO:WikiaDump:Fetching plnordycka dump from <https://s3.amazonaws.com/wikia_xml_dumps/p/pl/plnordycka_pages_current.xml.7z>...
+INFO:WikiaDump:HTTP 200 (129 kB fetched)
+INFO:WikiaDump:Cache set
+INFO:WikiaDump:Reading wikicorpus_f7dd3b75c5965ee10ae5fe4643fb806b file from dump
+...
+['Nordycka Wiki', 'Strona główna', '1968', '1948', 'Ormurin Langi', 'Mykines', 'Trollsjön', 'Wyspy Owcze', 'Nólsoy', 'Sandoy', 'Vágar', 'Mørk', 'Eysturoy', 'Rakfisk', 'Hákarl', '1298', 'Sztokfisz', '1978', '1920', 'Najbardziej na północ', 'Svalbard', 'Hamferð', 'Rok w Skandynawii', 'Islandia', 'Rissajaure']
 ```

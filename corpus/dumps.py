@@ -18,6 +18,7 @@ class BaseDump:
     A generic dump class. Wikipedia or Wikia dumps
     should have a separate class that customizes get_url() method
     """
+    ARCHIVE_FORMAT = 'bz2'
 
     def __init__(self, wiki):
         """
@@ -30,8 +31,7 @@ class BaseDump:
         self.http.headers['User-Agent'] = \
             'python-corpus (+https://github.com/macbre/faroese-corpus)'
 
-    @staticmethod
-    def get_cache_filename(url):
+    def get_cache_filename(self, url):
         """
         Return a hashed filename of cache entry for a given URL
 
@@ -41,7 +41,8 @@ class BaseDump:
         _hash = md5()
         _hash.update(url.encode('utf-8'))
 
-        return 'wikicorpus_{hash}.bz2'.format(hash=_hash.hexdigest())
+        return 'wikicorpus_{hash}.{extension}'.format(
+            hash=_hash.hexdigest(), extension=self.ARCHIVE_FORMAT)
 
     def get_url(self):
         """
@@ -117,6 +118,8 @@ class WikiaDump(BaseDump):
 
     https://community.wikia.com/wiki/Help:Database_download
     """
+    ARCHIVE_FORMAT = '7z'
+
     def get_url(self):
         # https://muppet.wikia.com/wiki/Special:Statistics
         return 'https://s3.amazonaws.com/wikia_xml_dumps/{}/{}/{}_pages_current.xml.7z'.format(
@@ -131,8 +134,6 @@ class WikiaDump(BaseDump):
         archive = Archive7z(self.fetch())
 
         file = archive.getnames()[0]
-        self.logger.info('Reading %s file from dump', file)
-
         archive_entry = archive.getmember(file)
 
         yield archive_entry.read()
