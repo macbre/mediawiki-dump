@@ -145,11 +145,8 @@ class WikiaDump(BaseDump):
         :rtype: list[str]
         """
         # https://github.com/Changaco/python-libarchive-c#usage
-        handler = self.fetch()
-
-        with libarchive.file_reader(handler.name) as archive:
-            for entry in archive:
-                for block in entry.get_blocks():
-                    yield block
-
-        handler.close()
+        with self.fetch() as handler:
+            with libarchive.file_reader(handler.name) as archive:
+                for entry in archive:
+                    for block in entry.get_blocks():
+                        yield block
