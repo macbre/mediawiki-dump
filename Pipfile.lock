@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "2a5ecdf3149b0b90dafc7b62b60a3dab1d7e8457f887602f621502420fd9ab9a"
+            "sha256": "d748b87ec8bbc8c42f92a63f2013de371e2c2822c4d6e50a015017bb8613bce2"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -37,12 +37,13 @@
             ],
             "version": "==2.7"
         },
-        "pylzma": {
+        "libarchive-c": {
             "hashes": [
-                "sha256:b874172afbf37770e643bf2dc9d9b6b03eb95d8f8162e157145b3fe9e1b68a1c"
+                "sha256:06d44d5b9520bdac93048c72b7ed66d11a6626da16d2086f9aad079674d8e061",
+                "sha256:c7dcb8cfa6b953bfa6926afeecc6307f24641b0754ccbff19c9add2d00d55df5"
             ],
             "index": "pypi",
-            "version": "==0.5.0"
+            "version": "==2.8"
         },
         "requests": {
             "hashes": [

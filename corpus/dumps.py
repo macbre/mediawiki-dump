@@ -8,10 +8,9 @@ from hashlib import md5
 from os.path import isfile
 from tempfile import gettempdir
 
+import libarchive
 import requests
 from requests.exceptions import HTTPError
-
-from py7zlib import Archive7z
 
 
 class DumpError(Exception):
@@ -145,11 +144,12 @@ class WikiaDump(BaseDump):
         """
         :rtype: list[str]
         """
-        # https://github.com/fancycode/pylzma/blob/master/tests/test_7zfiles.py
-        # https://github.com/fancycode/pylzma/blob/master/doc/USAGE.md
-        archive = Archive7z(self.fetch())
+        # https://github.com/Changaco/python-libarchive-c#usage
+        handler = self.fetch()
 
-        file = archive.getnames()[0]
-        archive_entry = archive.getmember(file)
+        with libarchive.file_reader(handler.name) as archive:
+            for entry in archive:
+                for block in entry.get_blocks():
+                    yield block
 
-        yield archive_entry.read()
+        handler.close()

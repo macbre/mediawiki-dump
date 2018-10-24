@@ -4,12 +4,12 @@ verify_ssl = true
 name = "pypi"
 
 [dev-packages]
-pylint = "*"
+pylint = "==2.1.1"
 pytest = "==3.9.2"
 
 [packages]
-requests = "*"
-pylzma = "*"
+requests = "==2.20.0"
+libarchive-c = "==2.8"
 
 [requires]
 python_version = "3.6"
