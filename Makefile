@@ -1,9 +1,8 @@
 init:
-	pip install pipenv
-	pipenv install --dev
+	pip install pipenv && pipenv install --dev
 
 test:
-	pipenv run pytest
+	pipenv run pytest -v
 
 lint:
 	pylint corpus/ *.py
