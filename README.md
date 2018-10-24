@@ -9,6 +9,14 @@ This repository will contain corpus of Faroese language taken from [the content 
 
 This project uses `pipenv`. [How to install `pipenv`](https://pipenv.readthedocs.io/en/latest/install/#pragmatic-installation-of-pipenv).
 
+## Dependencies
+
+In order to read 7zip archives (used by Wikia's XML dumps) you need to install [`libarchive`](http://libarchive.org/):
+
+```
+sudo apt install libarchive-dev
+```
+
 ## Links
 
 * [ FTS - Färöisk textsamling](https://spraakbanken.gu.se/korp/?mode=faroe)
