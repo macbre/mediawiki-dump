@@ -8,7 +8,16 @@ from hashlib import md5
 from os.path import isfile
 from tempfile import gettempdir
 
+import libarchive
 import requests
+from requests.exceptions import HTTPError
+
+
+class DumpError(Exception):
+    """
+    Generic exception class
+    """
+    pass
 
 
 class BaseDump:
@@ -16,6 +25,7 @@ class BaseDump:
     A generic dump class. Wikipedia or Wikia dumps
     should have a separate class that customizes get_url() method
     """
+    ARCHIVE_FORMAT = 'bz2'
 
     def __init__(self, wiki):
         """
@@ -28,8 +38,7 @@ class BaseDump:
         self.http.headers['User-Agent'] = \
             'python-corpus (+https://github.com/macbre/faroese-corpus)'
 
-    @staticmethod
-    def get_cache_filename(url):
+    def get_cache_filename(self, url):
         """
         Return a hashed filename of cache entry for a given URL
 
@@ -39,7 +48,8 @@ class BaseDump:
         _hash = md5()
         _hash.update(url.encode('utf-8'))
 
-        return 'wikicorpus_{hash}.bz2'.format(hash=_hash.hexdigest())
+        return 'wikicorpus_{hash}.{extension}'.format(
+            hash=_hash.hexdigest(), extension=self.ARCHIVE_FORMAT)
 
     def get_url(self):
         """
@@ -63,6 +73,14 @@ class BaseDump:
             response = self.http.get(url, stream=True)
             self.logger.info('HTTP %s (%d kB fetched)',
                              response.status_code, len(response.content) / 1024)
+
+            # raise an exception and do not set a cache entry
+            try:
+                response.raise_for_status()
+            except HTTPError as ex:
+                self.logger.error('Failed to fetch a dump', exc_info=True)
+                raise DumpError('Failed to fetch a dump, request ended with HTTP {}'.
+                                format(ex.response.status_code))
 
             # read the response as a stream and put it into cache file
             # http://docs.python-requests.org/en/master/user/advanced/#body-content-workflow
@@ -103,12 +121,10 @@ class WikipediaDump(BaseDump):
         """
         # https://docs.python.org/3.6/library/bz2.html#bz2.BZ2Decompressor
         decompressor = bz2.BZ2Decompressor()
-        handler = self.fetch()
 
-        for chunk in handler:
-            yield decompressor.decompress(chunk)
-
-        handler.close()
+        with self.fetch() as content:
+            for chunk in content:
+                yield decompressor.decompress(chunk)
 
 
 class WikiaDump(BaseDump):
@@ -116,9 +132,9 @@ class WikiaDump(BaseDump):
     Class for fetching Wikia dumps
 
     https://community.wikia.com/wiki/Help:Database_download
-
-    TODO: add 7zip archive support
     """
+    ARCHIVE_FORMAT = '7z'
+
     def get_url(self):
         # https://muppet.wikia.com/wiki/Special:Statistics
         return 'https://s3.amazonaws.com/wikia_xml_dumps/{}/{}/{}_pages_current.xml.7z'.format(
@@ -128,4 +144,9 @@ class WikiaDump(BaseDump):
         """
         :rtype: list[str]
         """
-        raise NotImplementedError('To be implemented')
+        # https://github.com/Changaco/python-libarchive-c#usage
+        with self.fetch() as handler:
+            with libarchive.file_reader(handler.name) as archive:
+                for entry in archive:
+                    for block in entry.get_blocks():
+                        yield block

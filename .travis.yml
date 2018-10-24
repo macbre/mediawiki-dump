@@ -11,3 +11,24 @@ install: "make"
 script:
     - make test
     - make lint
+
+# install libarchive
+# @see https://github.com/Changaco/python-libarchive-c/blob/master/.travis.yml
+cache:
+  directories:
+    - /opt/python-libarchive-c
+
+env:
+  global:
+    - LIBARCHIVE=/opt/python-libarchive-c/lib/libarchive.so
+    # https://github.com/libarchive/libarchive/releases
+    - LIBARCHIVE_VERSION=3.3.3
+
+before_install:
+  - sudo apt-get install -y zlib1g-dev liblzma-dev libbz2-dev libxml2-dev nettle-dev libattr1-dev libacl1-dev
+  - "if [ ! -e $LIBARCHIVE ]; then
+        wget http://libarchive.org/downloads/libarchive-3.3.$LIBARCHIVE_VERSION.tar.gz &&
+        tar -xf libarchive-$LIBARCHIVE_VERSION.tar.gz && cd libarchive-$LIBARCHIVE_VERSION &&
+        ./configure --prefix=/opt/python-libarchive-c --disable-bsdcpio --disable-bsdtar &&
+        make && sudo make install && cd .. ;
+    fi"
