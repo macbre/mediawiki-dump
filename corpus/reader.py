@@ -36,13 +36,11 @@ class DumpHandler(sax.ContentHandler):
 
     # pylint: disable=too-many-instance-attributes
     def __init__(self):
-        """
-        :type pages list
-        """
         super(DumpHandler, self).__init__()
         self.logger = logging.getLogger(self.__class__.__name__)
 
-        self.pages = []
+        self.pages_batch = []
+        self.pages_count = 0
 
         # parser state, are we inside <page> or <revision> tag?
         self.in_page = False
@@ -90,12 +88,14 @@ class DumpHandler(sax.ContentHandler):
             # add next page information
             self.logger.debug('Page #%d: %s', self.current_page_id, self.current_title)
 
-            self.pages.append((
+            self.pages_batch.append((
                 self.current_namespace,
                 self.current_page_id,
                 self.current_title,
                 self.current_content
             ))
+
+            self.pages_count += 1
 
             self.reset_state()
         elif name == 'revision':
@@ -122,10 +122,16 @@ class DumpHandler(sax.ContentHandler):
         """
         Used by DumpReader to yield pages as we parse the XML dump
         """
-        for page in self.pages:
+        for page in self.pages_batch:
             yield page
 
-        self.pages = []
+        self.pages_batch = []
+
+    def get_pages_count(self):
+        """
+        :rtype: int
+        """
+        return self.pages_count
 
 
 class DumpReader:
@@ -172,6 +178,8 @@ class DumpReader:
 
                 if self.filter_by_namespace(namespace):
                     yield namespace, page_id, title, content
+
+        self.logger.info('Parsing completed, pages found: %d', handler.get_pages_count())
 
 
 class DumpReaderArticles(DumpReader):
