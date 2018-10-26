@@ -1,5 +1,5 @@
 from mediawiki_dump.dumps import WikiaDump, WikipediaDump
-from mediawiki_dump.reader import DumpReader
+from mediawiki_dump.reader import DumpReader, DumpReaderArticles
 
 
 class WikipediaDumpFixture(WikipediaDump):
@@ -71,3 +71,13 @@ def test_wikia():
     assert pages[1][3] == '123\n[[Category:Browse]]'   # content
     assert pages[1][4] == 338  # revision ID
     assert pages[1][5] == '2018-03-07T12:51:12Z'  # revision timestamp
+
+
+def test_wikia_content_pages():
+    dump = WikiaDumpFixture()
+    reader = DumpReaderArticles()
+
+    pages = list(reader.read(dump))
+    print(pages)
+
+    assert len(pages) == 1, "There is only one content pages in the dump"
