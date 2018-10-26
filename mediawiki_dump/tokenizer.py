@@ -89,9 +89,6 @@ def tokenize_filter(text):
     if text[0].isdigit() and re.fullmatch(r'\d+', text):
         return False
 
-    if text in ['*']:
-        return False
-
     return True
 
 
