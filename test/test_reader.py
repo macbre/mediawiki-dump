@@ -1,5 +1,5 @@
-from corpus.dumps import WikiaDump, WikipediaDump
-from corpus.reader import DumpReader
+from mediawiki_dump.dumps import WikiaDump, WikipediaDump
+from mediawiki_dump.reader import DumpReader
 
 
 class WikipediaDumpFixture(WikipediaDump):

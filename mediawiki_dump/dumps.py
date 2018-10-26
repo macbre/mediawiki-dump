@@ -12,6 +12,8 @@ import libarchive
 import requests
 from requests.exceptions import HTTPError
 
+from mediawiki_dump import VERSION
+
 
 class DumpError(Exception):
     """
@@ -36,7 +38,8 @@ class BaseDump:
 
         self.http = requests.session()
         self.http.headers['User-Agent'] = \
-            'python-corpus (+https://github.com/macbre/faroese-corpus)'
+            'python-mediawiki-dump/{} ' \
+            '(+https://github.com/macbre/mediawiki-dump)'.format(VERSION)
 
     def get_cache_filename(self, url):
         """
@@ -48,7 +51,7 @@ class BaseDump:
         _hash = md5()
         _hash.update(url.encode('utf-8'))
 
-        return 'wikicorpus_{hash}.{extension}'.format(
+        return 'mediawiki_dump_{hash}.{extension}'.format(
             hash=_hash.hexdigest(), extension=self.ARCHIVE_FORMAT)
 
     def get_url(self):

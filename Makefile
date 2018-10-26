@@ -1,10 +1,10 @@
 init:
-	pip install pipenv && pipenv install --dev
+	pip install -e .[dev]
 
 test:
-	pipenv run pytest -v
+	pytest -v
 
 lint:
-	pylint corpus/ *.py
+	pylint mediawiki_dump
 
 .PHONY: test

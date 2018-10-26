@@ -172,7 +172,7 @@ class DumpReader:
 
     def read(self, dump):
         """
-        :type dump corpus.dumps.BaseDump
+        :type dump mediawiki_dump.dumps.BaseDump
         :rtype: list
         """
         self.logger.info('Parsing XML dump...')

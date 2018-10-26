@@ -1,4 +1,4 @@
-from corpus.dumps import WikipediaDump, WikiaDump
+from mediawiki_dump.dumps import WikipediaDump, WikiaDump
 
 
 def test_dump_get_url():
@@ -11,7 +11,7 @@ def test_dump_get_url():
 
 def test_get_cache_filename():
     dump = WikipediaDump('fo')
-    assert dump.get_cache_filename(dump.get_url()) == 'wikicorpus_62da4928a0a307185acaaa94f537d090.bz2'
+    assert dump.get_cache_filename(dump.get_url()) == 'mediawiki_dump_62da4928a0a307185acaaa94f537d090.bz2'
 
     dump = WikipediaDump('en')
-    assert dump.get_cache_filename(dump.get_url()) == 'wikicorpus_7160d38a2668dcc15a33ee6e2a685bbd.bz2'
+    assert dump.get_cache_filename(dump.get_url()) == 'mediawiki_dump_7160d38a2668dcc15a33ee6e2a685bbd.bz2'
