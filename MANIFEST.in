@@ -1,0 +1,2 @@
+recursive-exclude test *
+exclude README.md

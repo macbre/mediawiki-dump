@@ -1,6 +1,6 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
-VERSION = '0.1.1'
+VERSION = '0.1'
 
 # @see https://github.com/pypa/sampleproject/blob/master/setup.py
 setup(
@@ -33,7 +33,7 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
     ],
-    py_modules=["mediawiki_dump"],
+    packages=find_packages(),
     extras_require={
         'dev': [
             'coverage==4.5.1',
