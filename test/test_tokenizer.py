@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from corpus.tokenizer import clean, tokenize, tokenize_filter
+from mediawiki_dump.tokenizer import clean, tokenize, tokenize_filter
 
 
 class TestTokenizerClean(TestCase):

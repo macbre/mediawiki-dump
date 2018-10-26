@@ -1,13 +1,9 @@
-# faroese-corpus
-[![Build Status](https://travis-ci.org/macbre/faroese-corpus.svg?branch=master)](https://travis-ci.org/macbre/faroese-corpus)
+# mediawiki-dump
+[![Build Status](https://travis-ci.org/macbre/mediawiki-dump.svg?branch=master)](https://travis-ci.org/macbre/mediawiki-dump)
 
-Faroese corpus taken from Wikipedia dumps.
+Python package for working with [MediaWiki XML content dumps](https://www.mediawiki.org/wiki/Manual:Backing_up_a_wiki#Backup_the_content_of_the_wiki_(XML_dump)).
 
-This repository will contain corpus of Faroese language taken from [the content dump](https://dumps.wikimedia.org/fowikisource/latest/) of [Faroese Wikipedia](https://fo.wikipedia.org).
-
-## `pipenv`
-
-This project uses `pipenv`. [How to install `pipenv`](https://pipenv.readthedocs.io/en/latest/install/#pragmatic-installation-of-pipenv).
+Wikipedia (bz2 compressed) and Wikia (7zip) content dumps are supported.
 
 ## Dependencies
 
@@ -17,50 +13,23 @@ In order to read 7zip archives (used by Wikia's XML dumps) you need to install [
 sudo apt install libarchive-dev
 ```
 
-## Links
-
-* [ FTS - Färöisk textsamling](https://spraakbanken.gu.se/korp/?mode=faroe)
-* [Current XML dump](https://dumps.wikimedia.org/fowikisource/latest/fowikisource-latest-pages-meta-current.xml.bz2) (~14 MB)
-* [MediaWiki XML dump format](https://www.mediawiki.org/wiki/Help:Export#Export_format)
-
-
-## Scripts
-
-### `words_from_dump.py`
-
-Shows the longest words taken from the dump:
-
-```
-1 llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogoch - 58
-2 samvinnufelagiðsamvinnufelagnum - 31
-3 krabbameinsgranskingarstovnurin - 31
-4 southernplayalisticadillacmuzik - 31
-5 barnabókavirðislønavinnararnar - 30
-6 norðurlandameistarakappingini - 29
-7 sjónvarpsundirhaldssendingini - 29
-8 bókmentakritikaraheiðurslønir - 29
-9 einstaklingaítróttargreinunum - 29
-10 vegsúkklukappingarmeistaranum - 29
-...
-```
-
-## Features
+## API
 
 ### Tokenizer
 
 Allows you to clean up the wikitext:
 
 ```python
->>> from corpus.tokenizer import clean
->>> clean('[[Foo|bar]] is a link')
+from mediawiki_dump.tokenizer import clean
+clean('[[Foo|bar]] is a link')
 'bar is a link'
 ```
 
 And then tokenize the text:
 
 ```python
->>> from corpus.tokenizer import tokenize
->>> tokenize('11. juni 2007 varð kunngjørt, at Svínoyar kommuna verður løgd saman við Klaksvíkar kommunu eftir komandi bygdaráðsval.')
+from mediawiki_dump.tokenizer import tokenize
+tokenize('11. juni 2007 varð kunngjørt, at Svínoyar kommuna verður løgd saman við Klaksvíkar kommunu eftir komandi bygdaráðsval.')
 ['juni', 'varð', 'kunngjørt', 'at', 'Svínoyar', 'kommuna', 'verður', 'løgd', 'saman', 'við', 'Klaksvíkar', 'kommunu', 'eftir', 'komandi', 'bygdaráðsval']
 ```
 
@@ -69,8 +38,8 @@ And then tokenize the text:
 Fetch and parse dumps (using a local file cache):
 
 ```python
-from corpus.dumps import WikipediaDump
-from corpus.reader import DumpReader
+from mediawiki_dump.dumps import WikipediaDump
+from mediawiki_dump.reader import DumpReader
 
 dump = WikipediaDump('fo')
 pages = DumpReader().read(dump)
@@ -85,13 +54,13 @@ You can read article pages only as well:
 ```python
 import logging; logging.basicConfig(level=logging.INFO)
 
-from corpus.dumps import WikipediaDump
-from corpus.reader import DumpReaderArticles
+from mediawiki_dump.dumps import WikipediaDump
+from mediawiki_dump.reader import DumpReaderArticles
 
 dump = WikipediaDump('fo')
 pages = DumpReaderArticles().read(dump)
 
-print([title for _, _, title, _ in pages][:25])
+print([title for _, _, title, *rest in pages][:25])
 ```
 
 Will give you:
@@ -111,13 +80,13 @@ INFO:WikipediaDump:Cache set
  ```python
 import logging; logging.basicConfig(level=logging.INFO)
 
-from corpus.dumps import WikiaDump
-from corpus.reader import DumpReaderArticles
+from mediawiki_dump.dumps import WikiaDump
+from mediawiki_dump.reader import DumpReaderArticles
 
 dump = WikiaDump('plnordycka')
 pages = DumpReaderArticles().read(dump)
 
-print([title for _, _, title, _ in pages][:25])
+print([title for _, _, title, *rest in pages][:25])
 ```
 
 Will give you:
