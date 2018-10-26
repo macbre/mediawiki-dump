@@ -1,6 +1,6 @@
 from setuptools import setup
 
-from mediawiki_dump import VERSION
+VERSION = '0.1.1'
 
 # @see https://github.com/pypa/sampleproject/blob/master/setup.py
 setup(

@@ -12,8 +12,6 @@ import libarchive
 import requests
 from requests.exceptions import HTTPError
 
-from mediawiki_dump import VERSION
-
 
 class DumpError(Exception):
     """
@@ -38,8 +36,7 @@ class BaseDump:
 
         self.http = requests.session()
         self.http.headers['User-Agent'] = \
-            'python-mediawiki-dump/{} ' \
-            '(+https://github.com/macbre/mediawiki-dump)'.format(VERSION)
+            'python-mediawiki-dump (+https://github.com/macbre/mediawiki-dump)'
 
     def get_cache_filename(self, url):
         """
