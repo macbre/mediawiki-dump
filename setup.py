@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-VERSION = '0.1'
+VERSION = '0.2'
 
 # @see https://github.com/pypa/sampleproject/blob/master/setup.py
 setup(
