@@ -9,7 +9,7 @@ install: "make"
 
 # command to run tests
 script:
-    - make test
+    - make coverage
     - make lint
 
 # install libarchive

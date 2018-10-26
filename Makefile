@@ -1,3 +1,5 @@
+coverage_options = --include='mediawiki_dump/*' --omit='test/*'
+
 init:
 	pip install -e .[dev]
 
@@ -6,5 +8,18 @@ test:
 
 lint:
 	pylint mediawiki_dump
+
+coverage:
+	rm -f .coverage*
+	rm -rf htmlcov/*
+	coverage run -p -m py.test
+	coverage combine
+	coverage html -d htmlcov $(coverage_options)
+	coverage xml -i
+	coverage report $(coverage_options)
+
+publish:
+	# run git tag -a v0.0.0 before running make publish
+	python setup.py sdist upload -r pypi
 
 .PHONY: test
