@@ -45,6 +45,7 @@ class DumpHandler(sax.ContentHandler):
         # parser state, are we inside <page> or <revision> tag?
         self.in_page = False
         self.in_revision = False
+        self.in_contributor = False
 
         # concatenated content of tags
         self.tag_content = ''
@@ -53,6 +54,8 @@ class DumpHandler(sax.ContentHandler):
         self.current_title = ''
         self.current_namespace = 0
         self.current_page_id = 0
+        self.current_revision_id = 0
+        self.current_revision_timestamp = 0
         self.current_content = ''
 
     def reset_state(self):
@@ -61,10 +64,13 @@ class DumpHandler(sax.ContentHandler):
         """
         self.in_page = False
         self.in_revision = False
+        self.in_contributor = False
 
         self.current_title = ''
         self.current_namespace = 0
         self.current_page_id = 0
+        self.current_revision_id = 0
+        self.current_revision_timestamp = 0
         self.current_content = ''
 
     def startElement(self, name, attrs):
@@ -75,6 +81,8 @@ class DumpHandler(sax.ContentHandler):
             self.in_page = True
         elif name == 'revision':
             self.in_revision = True
+        elif name == 'contributor':
+            self.in_contributor = True
 
         self.tag_content = ''
 
@@ -92,17 +100,30 @@ class DumpHandler(sax.ContentHandler):
                 self.current_namespace,
                 self.current_page_id,
                 self.current_title,
-                self.current_content
+                self.current_content,
+                self.current_revision_id,
+                self.current_revision_timestamp,
             ))
 
             self.pages_count += 1
 
             self.reset_state()
-        elif name == 'revision':
+            return
+        if name == 'revision':
             self.in_revision = False
+            return
+        if name == 'contributor':
+            self.in_contributor = False
+            return
 
-        if self.in_revision:
-            if name == 'text':
+        if self.in_contributor:
+            pass
+        elif self.in_revision:
+            if name == 'id':
+                self.current_revision_id = int(self.tag_content)
+            elif name == 'timestamp':
+                self.current_revision_timestamp = self.tag_content
+            elif name == 'text':
                 self.current_content = self.tag_content
         elif self.in_page:
             if name == 'title':
@@ -169,7 +190,7 @@ class DumpReader:
 
             # yield pages as we go through XML stream
             for page in handler.get_pages():
-                (namespace, page_id, title, content) = page
+                (namespace, page_id, title, content, revision_id, revision_timestamp) = page
 
                 if content == '':
                     # https://fo.wikipedia.org/wiki/Kjak:L%C3%ADvfr%C3%B8%C3%B0i
@@ -177,7 +198,7 @@ class DumpReader:
                     continue
 
                 if self.filter_by_namespace(namespace):
-                    yield namespace, page_id, title, content
+                    yield namespace, page_id, title, content, revision_id, revision_timestamp
 
         self.logger.info('Parsing completed, pages found: %d', handler.get_pages_count())
 
