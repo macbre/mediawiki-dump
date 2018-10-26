@@ -25,7 +25,7 @@ def words_from_dump(wiki):
 
     # pages = list(pages)[:50]  # debug, take only first X pages
 
-    for _, _, title, content in pages:
+    for _, _, title, content, *_ in pages:
         if str(content).startswith('#REDIRECT'):
             logger.debug('%s is a redirect, skipping...', title)
             continue
