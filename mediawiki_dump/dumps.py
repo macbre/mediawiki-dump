@@ -22,14 +22,16 @@ class DumpError(Exception):
 
 class BaseDump:
     """
-    A generic dump class. Wikipedia or Wikia dumps
-    should have a separate class that customizes get_url() method
+    A generic dump class
+
+    Wikipedia or Wikia dumps should have a separate class that customizes get_url() method
     """
     ARCHIVE_FORMAT = 'bz2'
 
-    def __init__(self, wiki):
+    def __init__(self, wiki, full_history=False):
         """
         :type wiki str
+        :type full_history bool
         """
         self.wiki = wiki
         self.logger = logging.getLogger(self.__class__.__name__)
@@ -37,6 +39,9 @@ class BaseDump:
         self.http = requests.session()
         self.http.headers['User-Agent'] = \
             'python-mediawiki-dump (+https://github.com/macbre/mediawiki-dump)'
+
+        # do we want a full history or just the latest revisions?
+        self.full_history = full_history
 
     def get_cache_filename(self, url):
         """
@@ -113,7 +118,9 @@ class WikipediaDump(BaseDump):
     """
     def get_url(self):
         return 'https://dumps.wikimedia.org/{wiki}/latest/' \
-               '{wiki}-latest-pages-meta-current.xml.bz2'.format(wiki='{}wiki'.format(self.wiki))
+               '{wiki}-latest-pages-meta-{version}.xml.bz2'.\
+            format(wiki='{}wiki'.format(self.wiki),
+                   version='history' if self.full_history else 'current')
 
     def get_content(self):
         """
@@ -137,8 +144,9 @@ class WikiaDump(BaseDump):
 
     def get_url(self):
         # https://muppet.wikia.com/wiki/Special:Statistics
-        return 'https://s3.amazonaws.com/wikia_xml_dumps/{}/{}/{}_pages_current.xml.7z'.format(
-            self.wiki[0], self.wiki[:2], self.wiki)
+        return 'https://s3.amazonaws.com/wikia_xml_dumps/{}/{}/{}_pages_{version}.xml.7z'.format(
+            self.wiki[0], self.wiki[:2], self.wiki,
+            version='full' if self.full_history else 'current')
 
     def get_content(self):
         """

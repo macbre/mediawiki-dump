@@ -81,7 +81,7 @@ INFO:WikipediaDump:Cache set
 ['WIKIng', 'Føroyar', 'Borðoy', 'Eysturoy', 'Fugloy', 'Forsíða', 'Løgmenn í Føroyum', 'GNU Free Documentation License', 'GFDL', 'Opið innihald', 'Wikipedia', 'Alfrøði', '2004', '20. juni', 'WikiWiki', 'Wiki', 'Danmark', '21. juni', '22. juni', '23. juni', 'Lívfrøði', '24. juni', '25. juni', '26. juni', '27. juni']
 ```
 
-### Reading Wikia's dumps
+## Reading Wikia's dumps
 
  ```python
 import logging; logging.basicConfig(level=logging.INFO)
@@ -107,4 +107,46 @@ INFO:WikiaDump:Reading wikicorpus_f7dd3b75c5965ee10ae5fe4643fb806b file from dum
 ...
 INFO:DumpReaderArticles:Parsing completed, entries found: 615
 ['Nordycka Wiki', 'Strona główna', '1968', '1948', 'Ormurin Langi', 'Mykines', 'Trollsjön', 'Wyspy Owcze', 'Nólsoy', 'Sandoy', 'Vágar', 'Mørk', 'Eysturoy', 'Rakfisk', 'Hákarl', '1298', 'Sztokfisz', '1978', '1920', 'Najbardziej na północ', 'Svalbard', 'Hamferð', 'Rok w Skandynawii', 'Islandia', 'Rissajaure']
+```
+
+## Fetching full history
+
+Pass `full_history` to `BaseDump` constructor to fetch the XML content dump with full history:
+
+```python
+import logging; logging.basicConfig(level=logging.INFO)
+
+from mediawiki_dump.dumps import WikiaDump
+from mediawiki_dump.reader import DumpReaderArticles
+
+dump = WikiaDump('macbre', full_history=True)  # fetch full history, including old revisions
+pages = DumpReaderArticles().read(dump)
+
+print('\n'.join(['%d %s (%s)' % (timestamp, title, author) for _, _, title, _, _, timestamp, author in pages]))
+```
+
+Will give you:
+
+```
+INFO:DumpReaderArticles:Parsing completed, entries found: 384
+1476301866 Macbre Wiki (Default)
+1476301865 Macbre Wiki (Wikia)
+1478255600 Macbre Wiki (Macbre)
+1478255837 Macbre Wiki (FandomBot)
+1485355657 Macbre Wiki (FandomBot)
+1491823225 Macbre Wiki (Ryba777)
+1491823280 Macbre Wiki (Ryba777)
+1520427072 Macbre Wiki (Macbre)
+1476301865 Main Page (Wikia)
+1478600133 FooBar (None)
+1478600149 FooBar (None)
+...
+1528199144 YouTube tag (FANDOMbot)
+1528275084 Maps (Macbre)
+1528359433 Maps (Macbre)
+1528359456 Maps (Macbre)
+1532443940 Scary transclusion (Macbre)
+1536674655 Lua (Macbre)
+1536675264 Lua (Macbre)
+1536675277 Lua (Macbre)
 ```
