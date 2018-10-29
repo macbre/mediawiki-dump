@@ -59,6 +59,7 @@ class DumpHandler(sax.ContentHandler):
         self.current_revision_id = 0
         self.current_revision_timestamp = 0
         self.current_content = ''
+        self.current_contributor = None
 
     def reset_state(self):
         """
@@ -74,6 +75,7 @@ class DumpHandler(sax.ContentHandler):
         self.current_revision_id = 0
         self.current_revision_timestamp = 0
         self.current_content = ''
+        self.current_contributor = None
 
     def startElement(self, name, attrs):
         # print('>', name, attrs)
@@ -88,6 +90,7 @@ class DumpHandler(sax.ContentHandler):
 
         self.tag_content = ''
 
+    # pylint: disable=too-many-branches
     def endElement(self, name):
         # print('<', name, self.tag_content)
         # self.logger.info('< endElement %s (%s)', name, self.tag_content)
@@ -109,6 +112,7 @@ class DumpHandler(sax.ContentHandler):
                 self.current_content,
                 self.current_revision_id,
                 self.current_revision_timestamp,
+                self.current_contributor,
             ))
 
             self.entries_count += 1
@@ -118,7 +122,8 @@ class DumpHandler(sax.ContentHandler):
             return
 
         if self.in_contributor:
-            pass
+            if name == 'username':
+                self.current_contributor = self.tag_content
         elif self.in_revision:
             if name == 'id':
                 self.current_revision_id = int(self.tag_content)
@@ -191,7 +196,8 @@ class DumpReader:
 
             # yield pages as we go through XML stream
             for page in handler.get_entries():
-                (namespace, page_id, title, content, revision_id, revision_timestamp) = page
+                (namespace, page_id, title,
+                 content, revision_id, revision_timestamp, contributor) = page
 
                 if content == '':
                     # https://fo.wikipedia.org/wiki/Kjak:L%C3%ADvfr%C3%B8%C3%B0i
@@ -202,7 +208,7 @@ class DumpReader:
                     # parse "2004-05-25T02:19:28Z" to UNIX timestamp (in UTC)
                     timestamp = datetime_to_timestamp(revision_timestamp)
 
-                    yield namespace, page_id, title, content, revision_id, timestamp
+                    yield namespace, page_id, title, content, revision_id, timestamp, contributor
 
         self.logger.info('Parsing completed, entries found: %d', handler.get_entries_count())
 

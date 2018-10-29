@@ -53,7 +53,9 @@ pages = DumpReader().read(dump)
 ['Main Page', 'Brúkari:Jon Harald Søby', 'Forsíða', 'Ormurin Langi', 'Regin smiður', 'Fyrimynd:InterLingvLigoj', 'Heimsyvirlýsingin um mannarættindi', 'Bólkur:Kvæði', 'Bólkur:Yrking', 'Kjak:Forsíða']
 ```
 
-You can read article pages only as well:
+`read` method yields the following per-revision information: `namespace`, `page_id`, `title`, `content`, `revision_id`, `timestamp`, `contributor` (`None` for anonymous edits).
+
+By using `DumpReaderArticles` class you can read article pages only:
 
 ```python
 import logging; logging.basicConfig(level=logging.INFO)
