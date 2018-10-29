@@ -41,8 +41,8 @@ class DumpHandler(sax.ContentHandler):
         super(DumpHandler, self).__init__()
         self.logger = logging.getLogger(self.__class__.__name__)
 
-        self.pages_batch = []
-        self.pages_count = 0
+        self.entries_batch = []
+        self.entries_count = 0
 
         # parser state, are we inside <page> or <revision> tag?
         self.in_page = False
@@ -94,11 +94,15 @@ class DumpHandler(sax.ContentHandler):
 
         if name == 'page':
             self.in_page = False
+            self.reset_state()
+            return
+        if name == 'revision':
+            self.in_revision = False
 
-            # add next page information
+            # add next entry information
             self.logger.debug('Page #%d: %s', self.current_page_id, self.current_title)
 
-            self.pages_batch.append((
+            self.entries_batch.append((
                 self.current_namespace,
                 self.current_page_id,
                 self.current_title,
@@ -107,12 +111,7 @@ class DumpHandler(sax.ContentHandler):
                 self.current_revision_timestamp,
             ))
 
-            self.pages_count += 1
-
-            self.reset_state()
-            return
-        if name == 'revision':
-            self.in_revision = False
+            self.entries_count += 1
             return
         if name == 'contributor':
             self.in_contributor = False
@@ -141,20 +140,20 @@ class DumpHandler(sax.ContentHandler):
 
         self.tag_content += content
 
-    def get_pages(self):
+    def get_entries(self):
         """
         Used by DumpReader to yield pages as we parse the XML dump
         """
-        for page in self.pages_batch:
-            yield page
+        for entry in self.entries_batch:
+            yield entry
 
-        self.pages_batch = []
+        self.entries_batch = []
 
-    def get_pages_count(self):
+    def get_entries_count(self):
         """
         :rtype: int
         """
-        return self.pages_count
+        return self.entries_count
 
 
 class DumpReader:
@@ -191,7 +190,7 @@ class DumpReader:
             parser.feed(chunk)
 
             # yield pages as we go through XML stream
-            for page in handler.get_pages():
+            for page in handler.get_entries():
                 (namespace, page_id, title, content, revision_id, revision_timestamp) = page
 
                 if content == '':
@@ -205,7 +204,7 @@ class DumpReader:
 
                     yield namespace, page_id, title, content, revision_id, timestamp
 
-        self.logger.info('Parsing completed, entries found: %d', handler.get_pages_count())
+        self.logger.info('Parsing completed, entries found: %d', handler.get_entries_count())
 
 
 class DumpReaderArticles(DumpReader):

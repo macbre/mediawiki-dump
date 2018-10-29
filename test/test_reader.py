@@ -24,6 +24,17 @@ class WikiaDumpFixture(WikiaDump):
         return open('test/fixtures/dump.xml.7z', 'rb')
 
 
+class PlainDumpFixture(WikiaDump):
+    def __init__(self):
+        super(PlainDumpFixture, self).__init__('')
+
+    def get_url(self):
+        pass
+
+    def get_content(self):
+        return open('test/fixtures/dump.xml', 'rt')
+
+
 def test_wikipedia():
     dump = WikipediaDumpFixture()
     reader = DumpReader()
@@ -81,3 +92,22 @@ def test_wikia_content_pages():
     print(pages)
 
     assert len(pages) == 1, "There is only one content pages in the dump"
+
+
+def test_plain_dump():
+    dump = PlainDumpFixture()
+    reader = DumpReaderArticles()
+
+    pages = list(reader.read(dump))
+    print(pages)
+
+    assert len(pages) == 3, "There are three entries in the dump, but only two pages"
+
+    assert pages[0][2] == 'Page title'  # title
+    assert pages[0][5] == 979564500  # revision UNIX timestamp
+
+    assert pages[1][2] == 'Page title'  # title
+    assert pages[1][5] == 979564227  # revision UNIX timestamp
+
+    assert pages[2][2] == 'Talk:Page title'  # title
+    assert pages[2][5] == 979567380  # revision UNIX timestamp
