@@ -205,7 +205,7 @@ class DumpReader:
 
                     yield namespace, page_id, title, content, revision_id, timestamp
 
-        self.logger.info('Parsing completed, pages found: %d', handler.get_pages_count())
+        self.logger.info('Parsing completed, entries found: %d', handler.get_pages_count())
 
 
 class DumpReaderArticles(DumpReader):
