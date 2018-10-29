@@ -25,5 +25,11 @@
         <comment>hey</comment>
         <text>WHYD YOU LOCK PAGE??!!! i was editing that jerk</text>
       </revision>
+      <revision>
+        <timestamp>2001-01-15T14:03:00Z</timestamp>
+        <contributor><ip>10.0.0.2</ip></contributor>
+        <comment>hey</comment>
+        <text /><!-- this tag is intentionally left blank -->
+      </revision>
     </page>
   </mediawiki>
