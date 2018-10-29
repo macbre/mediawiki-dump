@@ -38,14 +38,14 @@ def test_wikipedia():
     assert pages[0][2] == 'MediaWiki:Logouttext'  # title
     assert str(pages[0][3]).startswith('Tú hevur nú ritað út.')   # content
     assert pages[0][4] == 18683  # revision ID
-    assert pages[0][5] == '2006-04-26T22:06:29Z'  # revision timestamp
+    assert pages[0][5] == 1146089189  # revision UNIX timestamp
 
     assert pages[1][0] == 0  # ns
     assert pages[1][1] == 2201  # page_id
     assert pages[1][2] == 'Klaksvíkar kommuna'  # title
     assert str(pages[1][3]).startswith('{{Infoboks Kommuna|\nnavn              = Klaksvíkar kommuna|')   # content
     assert pages[1][4] == 341301  # revision ID
-    assert pages[1][5] == '2016-11-09T13:00:10Z'  # revision timestamp
+    assert pages[1][5] == 1478696410  # revision UNIX timestamp
 
 
 def test_wikia():
@@ -63,14 +63,14 @@ def test_wikia():
     assert pages[0][2] == 'Kategoria:Browse'  # title
     assert str(pages[0][3]).startswith('The main category for this community')   # content
     assert pages[0][4] == 1  # revision ID
-    assert pages[0][5] == '2016-10-12T19:51:06Z'  # revision timestamp
+    assert pages[0][5] == 1476301866  # revision UNIX timestamp
 
     assert pages[1][0] == 0  # ns
     assert pages[1][1] == 2  # page_id
     assert pages[1][2] == 'Macbre Wiki'  # title
     assert pages[1][3] == '123\n[[Category:Browse]]'   # content
     assert pages[1][4] == 338  # revision ID
-    assert pages[1][5] == '2018-03-07T12:51:12Z'  # revision timestamp
+    assert pages[1][5] == 1520427072  # revision UNIX timestamp
 
 
 def test_wikia_content_pages():

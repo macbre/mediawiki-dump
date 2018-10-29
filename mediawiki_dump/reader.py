@@ -7,6 +7,8 @@ import logging
 
 from xml import sax
 
+from .utils import datetime_to_timestamp
+
 
 class DumpHandler(sax.ContentHandler):
     """
@@ -198,9 +200,12 @@ class DumpReader:
                     continue
 
                 if self.filter_by_namespace(namespace):
-                    yield namespace, page_id, title, content, revision_id, revision_timestamp
+                    # parse "2004-05-25T02:19:28Z" to UNIX timestamp (in UTC)
+                    timestamp = datetime_to_timestamp(revision_timestamp)
 
-        self.logger.info('Parsing completed, pages found: %d', handler.get_pages_count())
+                    yield namespace, page_id, title, content, revision_id, timestamp
+
+        self.logger.info('Parsing completed, entries found: %d', handler.get_pages_count())
 
 
 class DumpReaderArticles(DumpReader):
