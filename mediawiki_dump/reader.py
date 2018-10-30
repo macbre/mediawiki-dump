@@ -7,7 +7,7 @@ import logging
 
 from xml import sax
 
-from .utils import datetime_to_timestamp
+from .utils import parse_date_string
 
 
 class DumpHandler(sax.ContentHandler):
@@ -206,7 +206,7 @@ class DumpReader:
 
                 if self.filter_by_namespace(namespace):
                     # parse "2004-05-25T02:19:28Z" to UNIX timestamp (in UTC)
-                    timestamp = datetime_to_timestamp(revision_timestamp)
+                    timestamp = parse_date_string(revision_timestamp)
 
                     yield namespace, page_id, title, content, revision_id, timestamp, contributor
 
