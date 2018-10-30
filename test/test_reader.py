@@ -49,7 +49,7 @@ def test_wikipedia():
     assert pages[0][2] == 'MediaWiki:Logouttext'  # title
     assert str(pages[0][3]).startswith('Tú hevur nú ritað út.')   # content
     assert pages[0][4] == 18683  # revision ID
-    assert pages[0][5] == 1146089189  # revision UNIX timestamp
+    assert pages[0][5].timestamp() == 1146089189  # revision UNIX timestamp
     assert pages[0][6] == 'Quackor'  # author
 
     assert pages[1][0] == 0  # ns
@@ -57,7 +57,7 @@ def test_wikipedia():
     assert pages[1][2] == 'Klaksvíkar kommuna'  # title
     assert str(pages[1][3]).startswith('{{Infoboks Kommuna|\nnavn              = Klaksvíkar kommuna|')   # content
     assert pages[1][4] == 341301  # revision ID
-    assert pages[1][5] == 1478696410  # revision UNIX timestamp
+    assert pages[1][5].timestamp() == 1478696410  # revision UNIX timestamp
     assert pages[1][6] == 'EileenSanda'  # author
 
 
@@ -76,7 +76,7 @@ def test_wikia():
     assert pages[0][2] == 'Kategoria:Browse'  # title
     assert str(pages[0][3]).startswith('The main category for this community')   # content
     assert pages[0][4] == 1  # revision ID
-    assert pages[0][5] == 1476301866  # revision UNIX timestamp
+    assert pages[0][5].timestamp() == 1476301866  # revision UNIX timestamp
     assert pages[0][6] == 'Default'  # author
 
     assert pages[1][0] == 0  # ns
@@ -84,7 +84,7 @@ def test_wikia():
     assert pages[1][2] == 'Macbre Wiki'  # title
     assert pages[1][3] == '123\n[[Category:Browse]]'   # content
     assert pages[1][4] == 338  # revision ID
-    assert pages[1][5] == 1520427072  # revision UNIX timestamp
+    assert pages[1][5].timestamp() == 1520427072  # revision UNIX timestamp
     assert pages[1][6] == 'Macbre'  # author
 
 
@@ -108,13 +108,13 @@ def test_plain_dump():
     assert len(pages) == 3, "There are three entries in the dump, but only two pages"
 
     assert pages[0][2] == 'Page title'  # title
-    assert pages[0][5] == 979564500  # revision UNIX timestamp
+    assert pages[0][5].timestamp() == 979564500  # revision UNIX timestamp
     assert pages[0][6] == 'Foobar'  # author
 
     assert pages[1][2] == 'Page title'  # title
-    assert pages[1][5] == 979564227  # revision UNIX timestamp
+    assert pages[1][5].timestamp() == 979564227  # revision UNIX timestamp
     assert pages[1][6] == 'Foobar'  # author
 
     assert pages[2][2] == 'Talk:Page title'  # title
-    assert pages[2][5] == 979567380  # revision UNIX timestamp
+    assert pages[2][5].timestamp() == 979567380  # revision UNIX timestamp
     assert pages[2][6] is None  # an anonymous contributor

@@ -5,7 +5,7 @@
 pip install mediawiki_dump
 ```
 
-[Python package](https://pypi.org/project/mediawiki_dump/) for working with [MediaWiki XML content dumps](https://www.mediawiki.org/wiki/Manual:Backing_up_a_wiki#Backup_the_content_of_the_wiki_(XML_dump)).
+[Python3 package](https://pypi.org/project/mediawiki_dump/) for working with [MediaWiki XML content dumps](https://www.mediawiki.org/wiki/Manual:Backing_up_a_wiki#Backup_the_content_of_the_wiki_(XML_dump)).
 
 Wikipedia (bz2 compressed) and Wikia (7zip) content dumps are supported.
 
@@ -122,31 +122,31 @@ from mediawiki_dump.reader import DumpReaderArticles
 dump = WikiaDump('macbre', full_history=True)  # fetch full history, including old revisions
 pages = DumpReaderArticles().read(dump)
 
-print('\n'.join(['%d %s (%s)' % (timestamp, title, author) for _, _, title, _, _, timestamp, author in pages]))
+print('\n'.join(['%s %s (%s)' % (str(timestamp), title, author) for _, _, title, _, _, timestamp, author in pages]))
 ```
 
 Will give you:
 
 ```
 INFO:DumpReaderArticles:Parsing completed, entries found: 384
-1476301866 Macbre Wiki (Default)
-1476301865 Macbre Wiki (Wikia)
-1478255600 Macbre Wiki (Macbre)
-1478255837 Macbre Wiki (FandomBot)
-1485355657 Macbre Wiki (FandomBot)
-1491823225 Macbre Wiki (Ryba777)
-1491823280 Macbre Wiki (Ryba777)
-1520427072 Macbre Wiki (Macbre)
-1476301865 Main Page (Wikia)
-1478600133 FooBar (None)
-1478600149 FooBar (None)
+2016-10-12 19:51:06+00:00 Macbre Wiki (Default)
+2016-10-12 19:51:05+00:00 Macbre Wiki (Wikia)
+2016-11-04 10:33:20+00:00 Macbre Wiki (Macbre)
+2016-11-04 10:37:17+00:00 Macbre Wiki (FandomBot)
+2017-01-25 14:47:37+00:00 Macbre Wiki (FandomBot)
+2017-04-10 11:20:25+00:00 Macbre Wiki (Ryba777)
+2017-04-10 11:21:20+00:00 Macbre Wiki (Ryba777)
+2018-03-07 12:51:12+00:00 Macbre Wiki (Macbre)
+2016-10-12 19:51:05+00:00 Main Page (Wikia)
+2016-11-08 10:15:33+00:00 FooBar (None)
+2016-11-08 10:15:49+00:00 FooBar (None)
 ...
-1528199144 YouTube tag (FANDOMbot)
-1528275084 Maps (Macbre)
-1528359433 Maps (Macbre)
-1528359456 Maps (Macbre)
-1532443940 Scary transclusion (Macbre)
-1536674655 Lua (Macbre)
-1536675264 Lua (Macbre)
-1536675277 Lua (Macbre)
+2018-06-05 11:45:44+00:00 YouTube tag (FANDOMbot)
+2018-06-06 08:51:24+00:00 Maps (Macbre)
+2018-06-07 08:17:13+00:00 Maps (Macbre)
+2018-06-07 08:17:36+00:00 Maps (Macbre)
+2018-07-24 14:52:20+00:00 Scary transclusion (Macbre)
+2018-09-11 14:04:15+00:00 Lua (Macbre)
+2018-09-11 14:14:24+00:00 Lua (Macbre)
+2018-09-11 14:14:37+00:00 Lua (Macbre)
 ```
