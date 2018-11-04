@@ -1,4 +1,5 @@
 from mediawiki_dump.dumps import WikiaDump, WikipediaDump
+from mediawiki_dump.entry import DumpEntry
 from mediawiki_dump.reader import DumpReader, DumpReaderArticles
 
 
@@ -42,23 +43,25 @@ def test_wikipedia():
     pages = list(reader.read(dump))
 
     assert len(pages) == 2, "Dump has two items"
-    assert len(pages[0]) == 7, "Each item has seven members"
+    assert isinstance(pages[0], DumpEntry)
 
-    assert pages[0][0] == 8  # ns
-    assert pages[0][1] == 121  # page_id
-    assert pages[0][2] == 'MediaWiki:Logouttext'  # title
-    assert str(pages[0][3]).startswith('Tú hevur nú ritað út.')   # content
-    assert pages[0][4] == 18683  # revision ID
-    assert pages[0][5].timestamp() == 1146089189  # revision UNIX timestamp
-    assert pages[0][6] == 'Quackor'  # author
+    entry = pages[0]
+    assert entry.namespace == 8  # ns
+    assert entry.page_id == 121  # page_id
+    assert entry.title == 'MediaWiki:Logouttext'  # title
+    assert str(entry.content).startswith('Tú hevur nú ritað út.')   # content
+    assert entry.revision_id == 18683  # revision ID
+    assert entry.unix_timestamp == 1146089189  # revision UNIX timestamp
+    assert entry.contributor == 'Quackor'  # author
 
-    assert pages[1][0] == 0  # ns
-    assert pages[1][1] == 2201  # page_id
-    assert pages[1][2] == 'Klaksvíkar kommuna'  # title
-    assert str(pages[1][3]).startswith('{{Infoboks Kommuna|\nnavn              = Klaksvíkar kommuna|')   # content
-    assert pages[1][4] == 341301  # revision ID
-    assert pages[1][5].timestamp() == 1478696410  # revision UNIX timestamp
-    assert pages[1][6] == 'EileenSanda'  # author
+    entry = pages[1]
+    assert entry.namespace == 0  # ns
+    assert entry.page_id == 2201  # page_id
+    assert entry.title == 'Klaksvíkar kommuna'  # title
+    assert str(entry.content).startswith('{{Infoboks Kommuna|\nnavn              = Klaksvíkar kommuna|')   # content
+    assert entry.revision_id == 341301  # revision ID
+    assert entry.unix_timestamp == 1478696410  # revision UNIX timestamp
+    assert entry.contributor == 'EileenSanda'  # author
 
 
 def test_wikia():
@@ -69,23 +72,22 @@ def test_wikia():
     print(pages)
 
     assert len(pages) == 3, "Dump has three items"
-    assert len(pages[0]) == 7, "Each item has seven members"
 
-    assert pages[0][0] == 14  # ns
-    assert pages[0][1] == 1  # page_id
-    assert pages[0][2] == 'Kategoria:Browse'  # title
-    assert str(pages[0][3]).startswith('The main category for this community')   # content
-    assert pages[0][4] == 1  # revision ID
-    assert pages[0][5].timestamp() == 1476301866  # revision UNIX timestamp
-    assert pages[0][6] == 'Default'  # author
+    assert pages[0].namespace == 14  # ns
+    assert pages[0].page_id == 1  # page_id
+    assert pages[0].title == 'Kategoria:Browse'  # title
+    assert str(pages[0].content).startswith('The main category for this community')   # content
+    assert pages[0].revision_id == 1  # revision ID
+    assert pages[0].unix_timestamp == 1476301866  # revision UNIX timestamp
+    assert pages[0].contributor == 'Default'  # author
 
-    assert pages[1][0] == 0  # ns
-    assert pages[1][1] == 2  # page_id
-    assert pages[1][2] == 'Macbre Wiki'  # title
-    assert pages[1][3] == '123\n[[Category:Browse]]'   # content
-    assert pages[1][4] == 338  # revision ID
-    assert pages[1][5].timestamp() == 1520427072  # revision UNIX timestamp
-    assert pages[1][6] == 'Macbre'  # author
+    assert pages[1].namespace == 0  # ns
+    assert pages[1].page_id == 2  # page_id
+    assert pages[1].title == 'Macbre Wiki'  # title
+    assert pages[1].content == '123\n[[Category:Browse]]'   # content
+    assert pages[1].revision_id == 338  # revision ID
+    assert pages[1].unix_timestamp == 1520427072  # revision UNIX timestamp
+    assert pages[1].contributor == 'Macbre'  # author
 
 
 def test_wikia_content_pages():
@@ -107,14 +109,16 @@ def test_plain_dump():
 
     assert len(pages) == 3, "There are three entries in the dump, but only two pages"
 
-    assert pages[0][2] == 'Page title'  # title
-    assert pages[0][5].timestamp() == 979564500  # revision UNIX timestamp
-    assert pages[0][6] == 'Foobar'  # author
+    assert pages[0].title == 'Page title'  # title
+    assert pages[0].unix_timestamp == 979564500  # revision UNIX timestamp
+    assert pages[0].contributor == 'Foobar'  # author
 
-    assert pages[1][2] == 'Page title'  # title
-    assert pages[1][5].timestamp() == 979564227  # revision UNIX timestamp
-    assert pages[1][6] == 'Foobar'  # author
+    assert pages[1].title == 'Page title'  # title
+    assert pages[1].unix_timestamp == 979564227  # revision UNIX timestamp
+    assert pages[1].contributor == 'Foobar'  # author
+    assert pages[1].is_anon() is False
 
-    assert pages[2][2] == 'Talk:Page title'  # title
-    assert pages[2][5].timestamp() == 979567380  # revision UNIX timestamp
-    assert pages[2][6] is None  # an anonymous contributor
+    assert pages[2].title == 'Talk:Page title'  # title
+    assert pages[2].unix_timestamp == 979567380  # revision UNIX timestamp
+    assert pages[2].contributor is None  # an anonymous contributor
+    assert pages[2].is_anon() is True
