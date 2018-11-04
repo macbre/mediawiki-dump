@@ -66,7 +66,7 @@ from mediawiki_dump.reader import DumpReaderArticles
 dump = WikipediaDump('fo')
 pages = DumpReaderArticles().read(dump)
 
-print([title for _, _, title, *rest in pages][:25])
+print([page.title for page in pages][:25])
 ```
 
 Will give you:
@@ -92,7 +92,7 @@ from mediawiki_dump.reader import DumpReaderArticles
 dump = WikiaDump('plnordycka')
 pages = DumpReaderArticles().read(dump)
 
-print([title for _, _, title, *rest in pages][:25])
+print([page.title for page in pages][:25])
 ```
 
 Will give you:
@@ -122,31 +122,31 @@ from mediawiki_dump.reader import DumpReaderArticles
 dump = WikiaDump('macbre', full_history=True)  # fetch full history, including old revisions
 pages = DumpReaderArticles().read(dump)
 
-print('\n'.join(['%s %s (%s)' % (str(timestamp), title, author) for _, _, title, _, _, timestamp, author in pages]))
+print('\n'.join([repr(page) for page in pages]))
 ```
 
 Will give you:
 
 ```
 INFO:DumpReaderArticles:Parsing completed, entries found: 384
-2016-10-12 19:51:06+00:00 Macbre Wiki (Default)
-2016-10-12 19:51:05+00:00 Macbre Wiki (Wikia)
-2016-11-04 10:33:20+00:00 Macbre Wiki (Macbre)
-2016-11-04 10:37:17+00:00 Macbre Wiki (FandomBot)
-2017-01-25 14:47:37+00:00 Macbre Wiki (FandomBot)
-2017-04-10 11:20:25+00:00 Macbre Wiki (Ryba777)
-2017-04-10 11:21:20+00:00 Macbre Wiki (Ryba777)
-2018-03-07 12:51:12+00:00 Macbre Wiki (Macbre)
-2016-10-12 19:51:05+00:00 Main Page (Wikia)
-2016-11-08 10:15:33+00:00 FooBar (None)
-2016-11-08 10:15:49+00:00 FooBar (None)
+<DumpEntry "Macbre Wiki" by Default at 2016-10-12T19:51:06+00:00>
+<DumpEntry "Macbre Wiki" by Wikia at 2016-10-12T19:51:05+00:00>
+<DumpEntry "Macbre Wiki" by Macbre at 2016-11-04T10:33:20+00:00>
+<DumpEntry "Macbre Wiki" by FandomBot at 2016-11-04T10:37:17+00:00>
+<DumpEntry "Macbre Wiki" by FandomBot at 2017-01-25T14:47:37+00:00>
+<DumpEntry "Macbre Wiki" by Ryba777 at 2017-04-10T11:20:25+00:00>
+<DumpEntry "Macbre Wiki" by Ryba777 at 2017-04-10T11:21:20+00:00>
+<DumpEntry "Macbre Wiki" by Macbre at 2018-03-07T12:51:12+00:00>
+<DumpEntry "Main Page" by Wikia at 2016-10-12T19:51:05+00:00>
+<DumpEntry "FooBar" by Anonymous at 2016-11-08T10:15:33+00:00>
+<DumpEntry "FooBar" by Anonymous at 2016-11-08T10:15:49+00:00>
 ...
-2018-06-05 11:45:44+00:00 YouTube tag (FANDOMbot)
-2018-06-06 08:51:24+00:00 Maps (Macbre)
-2018-06-07 08:17:13+00:00 Maps (Macbre)
-2018-06-07 08:17:36+00:00 Maps (Macbre)
-2018-07-24 14:52:20+00:00 Scary transclusion (Macbre)
-2018-09-11 14:04:15+00:00 Lua (Macbre)
-2018-09-11 14:14:24+00:00 Lua (Macbre)
-2018-09-11 14:14:37+00:00 Lua (Macbre)
+<DumpEntry "YouTube tag" by FANDOMbot at 2018-06-05T11:45:44+00:00>
+<DumpEntry "Maps" by Macbre at 2018-06-06T08:51:24+00:00>
+<DumpEntry "Maps" by Macbre at 2018-06-07T08:17:13+00:00>
+<DumpEntry "Maps" by Macbre at 2018-06-07T08:17:36+00:00>
+<DumpEntry "Scary transclusion" by Macbre at 2018-07-24T14:52:20+00:00>
+<DumpEntry "Lua" by Macbre at 2018-09-11T14:04:15+00:00>
+<DumpEntry "Lua" by Macbre at 2018-09-11T14:14:24+00:00>
+<DumpEntry "Lua" by Macbre at 2018-09-11T14:14:37+00:00>
 ```

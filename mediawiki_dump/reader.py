@@ -7,7 +7,7 @@ import logging
 
 from xml import sax
 
-from .utils import parse_date_string
+from. entry import DumpEntry
 
 
 class DumpHandler(sax.ContentHandler):
@@ -179,7 +179,7 @@ class DumpReader:
     def read(self, dump):
         """
         :type dump mediawiki_dump.dumps.BaseDump
-        :rtype: list
+        :rtype: list[DumpEntry]
         """
         self.logger.info('Parsing XML dump...')
 
@@ -205,10 +205,10 @@ class DumpReader:
                     continue
 
                 if self.filter_by_namespace(namespace):
-                    # parse "2004-05-25T02:19:28Z" to UNIX timestamp (in UTC)
-                    timestamp = parse_date_string(revision_timestamp)
-
-                    yield namespace, page_id, title, content, revision_id, timestamp, contributor
+                    yield DumpEntry(
+                        namespace, page_id, title, content,
+                        revision_id, revision_timestamp, contributor
+                    )
 
         self.logger.info('Parsing completed, entries found: %d', handler.get_entries_count())
 
