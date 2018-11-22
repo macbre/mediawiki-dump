@@ -48,7 +48,7 @@ from mediawiki_dump.reader import DumpReader
 dump = WikipediaDump('fo')
 pages = DumpReader().read(dump)
 
-[title for _, _, title, *rest in pages][:10]
+[page.title for page in pages][:10]
 
 ['Main Page', 'Brúkari:Jon Harald Søby', 'Forsíða', 'Ormurin Langi', 'Regin smiður', 'Fyrimynd:InterLingvLigoj', 'Heimsyvirlýsingin um mannarættindi', 'Bólkur:Kvæði', 'Bólkur:Yrking', 'Kjak:Forsíða']
 ```
