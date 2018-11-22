@@ -44,6 +44,9 @@ class DumpHandler(sax.ContentHandler):
         self.entries_batch = []
         self.entries_count = 0
 
+        # attributes from <mediawiki> root XML tag
+        self.metadata = None
+
         # parser state, are we inside <page> or <revision> tag?
         self.in_page = False
         self.in_revision = False
@@ -78,6 +81,10 @@ class DumpHandler(sax.ContentHandler):
         self.current_contributor = None
 
     def startElement(self, name, attrs):
+        """
+        :type name str
+        :type attrs xml.sax.xmlreader.AttributesImpl
+        """
         # print('>', name, attrs)
         # self.logger.info('> startElement %s %s', name, attrs)
 
@@ -87,6 +94,8 @@ class DumpHandler(sax.ContentHandler):
             self.in_revision = True
         elif name == 'contributor':
             self.in_contributor = True
+        elif name == 'mediawiki':
+            self.metadata = dict(zip(attrs.keys(), attrs.values()))
 
         self.tag_content = ''
 
@@ -160,6 +169,12 @@ class DumpHandler(sax.ContentHandler):
         """
         return self.entries_count
 
+    def get_metadata(self):
+        """
+        :rtype: dict|None
+        """
+        return self.metadata
+
 
 class DumpReader:
     """
@@ -167,6 +182,9 @@ class DumpReader:
     """
     def __init__(self):
         self.logger = logging.getLogger(self.__class__.__name__)
+
+        # https://docs.python.org/2/library/xml.etree.elementtree.html#parsing-xml
+        self.handler = DumpHandler()
 
     @staticmethod
     def filter_by_namespace(namespace):
@@ -183,19 +201,14 @@ class DumpReader:
         """
         self.logger.info('Parsing XML dump...')
 
-        # https://docs.python.org/2/library/xml.etree.elementtree.html#parsing-xml
-
-        # https: // docs.python.org / 3.6 / library / xml.sax.html?highlight = sax  # xml.sax.parse
-        handler = DumpHandler()
-
         parser = sax.make_parser()
-        parser.setContentHandler(handler)
+        parser.setContentHandler(self.handler)
 
         for chunk in dump.get_content():
             parser.feed(chunk)
 
             # yield pages as we go through XML stream
-            for page in handler.get_entries():
+            for page in self.handler.get_entries():
                 (namespace, page_id, title,
                  content, revision_id, revision_timestamp, contributor) = page
 
@@ -210,7 +223,13 @@ class DumpReader:
                         revision_id, revision_timestamp, contributor
                     )
 
-        self.logger.info('Parsing completed, entries found: %d', handler.get_entries_count())
+        self.logger.info('Parsing completed, entries found: %d', self.handler.get_entries_count())
+
+    def get_dump_language(self):
+        """
+        :rtype: str
+        """
+        return self.handler.get_metadata().get('xml:lang')
 
 
 class DumpReaderArticles(DumpReader):

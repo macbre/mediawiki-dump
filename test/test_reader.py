@@ -45,6 +45,8 @@ def test_wikipedia():
     assert len(pages) == 2, "Dump has two items"
     assert isinstance(pages[0], DumpEntry)
 
+    assert reader.get_dump_language() == 'fo'
+
     entry = pages[0]
     assert entry.namespace == 8  # ns
     assert entry.page_id == 121  # page_id
@@ -70,6 +72,8 @@ def test_wikia():
 
     pages = list(reader.read(dump))
     print(pages)
+
+    assert reader.get_dump_language() == 'pl'
 
     assert len(pages) == 3, "Dump has three items"
 

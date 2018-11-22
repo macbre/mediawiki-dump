@@ -53,7 +53,7 @@ pages = DumpReader().read(dump)
 ['Main Page', 'Brúkari:Jon Harald Søby', 'Forsíða', 'Ormurin Langi', 'Regin smiður', 'Fyrimynd:InterLingvLigoj', 'Heimsyvirlýsingin um mannarættindi', 'Bólkur:Kvæði', 'Bólkur:Yrking', 'Kjak:Forsíða']
 ```
 
-`read` method yields the following per-revision information: `namespace`, `page_id`, `title`, `content`, `revision_id`, `timestamp`, `contributor` (`None` for anonymous edits).
+`read` method yields the `DumpEntry` object for each revision.
 
 By using `DumpReaderArticles` class you can read article pages only:
 
@@ -64,9 +64,12 @@ from mediawiki_dump.dumps import WikipediaDump
 from mediawiki_dump.reader import DumpReaderArticles
 
 dump = WikipediaDump('fo')
-pages = DumpReaderArticles().read(dump)
+reader = DumpReaderArticles()
+pages = reader.read(dump)
 
 print([page.title for page in pages][:25])
+
+print(reader.get_dump_language())  # fo
 ```
 
 Will give you:
