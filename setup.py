@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-VERSION = '0.4'
+VERSION = '0.5'
 
 # @see https://packaging.python.org/tutorials/packaging-projects/#creating-setup-py
 with open("README.md", "r") as fh:
