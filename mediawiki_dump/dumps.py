@@ -76,8 +76,8 @@ class BaseDump:
             # fetch the resource
             self.logger.info('Fetching %s dump from <%s>...', self.wiki, url)
             response = self.http.get(url, stream=True)
-            self.logger.info('HTTP %s (%d kB fetched)',
-                             response.status_code, response.headers['content-length'])
+            self.logger.info('HTTP %s (%d kB will be fetched)',
+                             response.status_code, int(response.headers['content-length']) / 1024)
 
             # raise an exception and do not set a cache entry
             try:
