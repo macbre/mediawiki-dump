@@ -75,6 +75,9 @@ def clean(text):
     text = re.sub(r'<[^>]+/?>', ' ', text)  # <br> / <br />
     text = text.replace('&nbsp;', ' ')
 
+    # magic words
+    text = re.sub(r'__\w+__', '', text)  # __TOC__
+
     return text.strip()
 
 

@@ -67,6 +67,11 @@ class TestTokenizerClean(TestCase):
         assert clean('foo<br />') == 'foo'
         assert clean('foo<br />bar') == 'foo bar'
 
+    def test_magic_words(self):
+        assert clean('foo__NOWYSIWYG__bar') == 'foobar'
+        assert clean('foo\n\n__TOC__\nbar') == 'foo\n\n\nbar'
+        assert clean('foo __ foo __ bar') == 'foo __ foo __ bar'
+
     def test_tables(self):
         assert clean("""
 foo
