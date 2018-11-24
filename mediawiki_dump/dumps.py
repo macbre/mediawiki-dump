@@ -77,7 +77,7 @@ class BaseDump:
             self.logger.info('Fetching %s dump from <%s>...', self.wiki, url)
             response = self.http.get(url, stream=True)
             self.logger.info('HTTP %s (%d kB fetched)',
-                             response.status_code, len(response.content) / 1024)
+                             response.status_code, response.headers['content-length'])
 
             # raise an exception and do not set a cache entry
             try:
@@ -92,9 +92,9 @@ class BaseDump:
             #
             # before using a stream reading and parsing of Faroese dump made the words_from_dump.py
             # script took ~460 MB of memory, after the change - ~60 MB
-            with response:
-                with open(cache_filename, 'wb') as file:
-                    for chunk in response.iter_content():
+            with open(cache_filename, 'wb') as file:
+                for chunk in response.iter_content(chunk_size=1024):
+                    if chunk:
                         file.write(chunk)
 
                 response.close()
