@@ -16,7 +16,6 @@ class DumpError(Exception):
     """
     Generic exception class
     """
-    pass
 
 
 class BaseDump:
