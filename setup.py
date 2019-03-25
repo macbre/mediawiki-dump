@@ -43,9 +43,9 @@ setup(
     packages=find_packages(),
     extras_require={
         'dev': [
-            'coverage==4.5.1',
-            'pylint==2.1.1',
-            'pytest==3.9.3',
+            'coverage==4.5.3',
+            'pylint==2.3.1',
+            'pytest==4.3.1',
         ]
     },
     install_requires=[

@@ -8,7 +8,6 @@ from hashlib import md5
 from os.path import isfile
 from tempfile import gettempdir
 
-import libarchive
 import requests
 from requests.exceptions import HTTPError
 
@@ -17,7 +16,6 @@ class DumpError(Exception):
     """
     Generic exception class
     """
-    pass
 
 
 class BaseDump:
@@ -153,6 +151,12 @@ class WikiaDump(BaseDump):
         :rtype: list[str]
         """
         # https://github.com/Changaco/python-libarchive-c#usage
+        try:
+            import libarchive
+        except AttributeError:
+            # AttributeError: undefined symbol: archive_errno
+            raise DumpError("Failed to import libarchive with 7zip support")
+
         with self.fetch() as handler:
             with libarchive.file_reader(handler.name) as archive:
                 for entry in archive:
