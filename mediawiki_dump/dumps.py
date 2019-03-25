@@ -156,7 +156,7 @@ class WikiaDump(BaseDump):
             import libarchive
         except AttributeError:
             # AttributeError: undefined symbol: archive_errno
-            throw DumpError("Failed to import libarchive with 7zip support")
+            raise DumpError("Failed to import libarchive with 7zip support")
 
         with self.fetch() as handler:
             with libarchive.file_reader(handler.name) as archive:
