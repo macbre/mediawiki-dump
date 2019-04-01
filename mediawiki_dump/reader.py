@@ -47,7 +47,12 @@ class DumpHandler(sax.ContentHandler):
         # attributes from <mediawiki> root XML tag
         self.metadata = None
 
+        # nodes from <siteinfo> XML tag
+        self.siteinfo = dict()
+        self.base_url = None
+
         # parser state, are we inside <page> or <revision> tag?
+        self.in_siteinfo = False
         self.in_page = False
         self.in_revision = False
         self.in_contributor = False
@@ -68,6 +73,7 @@ class DumpHandler(sax.ContentHandler):
         """
         Reset page information
         """
+        self.in_siteinfo = False
         self.in_page = False
         self.in_revision = False
         self.in_contributor = False
@@ -88,7 +94,9 @@ class DumpHandler(sax.ContentHandler):
         # print('>', name, attrs)
         # self.logger.info('> startElement %s %s', name, attrs)
 
-        if name == 'page':
+        if name == 'siteinfo':
+            self.in_siteinfo = True
+        elif name == 'page':
             self.in_page = True
         elif name == 'revision':
             self.in_revision = True
@@ -104,6 +112,10 @@ class DumpHandler(sax.ContentHandler):
         # print('<', name, self.tag_content)
         # self.logger.info('< endElement %s (%s)', name, self.tag_content)
 
+        if name == 'siteinfo':
+            self.in_siteinfo = False
+            self.reset_state()
+            return
         if name == 'page':
             self.in_page = False
             self.reset_state()
@@ -114,9 +126,13 @@ class DumpHandler(sax.ContentHandler):
             # add next entry information
             self.logger.debug('Page #%d: %s', self.current_page_id, self.current_title)
 
+            # build entry URL
+            url = self.get_base_url() + self.current_title.replace(' ', '_')
+
             self.entries_batch.append((
                 self.current_namespace,
                 self.current_page_id,
+                url,
                 self.current_title,
                 self.current_content,
                 self.current_revision_id,
@@ -147,6 +163,9 @@ class DumpHandler(sax.ContentHandler):
                 self.current_namespace = int(self.tag_content)
             elif name == 'id':
                 self.current_page_id = int(self.tag_content)
+        elif self.in_siteinfo:
+            if name in ['dbname', 'base', 'generator']:
+                self.siteinfo[name] = self.tag_content
 
     def characters(self, content):
         # print('=', content)
@@ -174,6 +193,25 @@ class DumpHandler(sax.ContentHandler):
         :rtype: dict|None
         """
         return self.metadata
+
+    def get_siteinfo(self):
+        """
+        :rtype: dict
+        """
+        return self.siteinfo
+
+    def get_base_url(self):
+        """
+        :rtype: str
+        """
+        # e.g. base URL <https://pl.wikipedia.org/wiki/Wikipedia:Strona_g%C5%82%C3%B3wna>
+        # will return <https://pl.wikipedia.org/wiki/>
+        if self.base_url is None:
+            main_page = str(self.siteinfo.get('base'))
+            self.base_url = '/'.join(main_page.split('/')[0:-1])
+            self.base_url += '/'  # ends with slash
+
+        return self.base_url
 
 
 class DumpReader:
@@ -209,7 +247,7 @@ class DumpReader:
 
             # yield pages as we go through XML stream
             for page in self.handler.get_entries():
-                (namespace, page_id, title,
+                (namespace, page_id, url, title,
                  content, revision_id, revision_timestamp, contributor) = page
 
                 if self.filter_by_namespace(namespace):
@@ -220,7 +258,7 @@ class DumpReader:
                         continue
 
                     yield DumpEntry(
-                        namespace, page_id, title, content,
+                        namespace, page_id, url, title, content,
                         revision_id, revision_timestamp, contributor
                     )
 
@@ -231,6 +269,12 @@ class DumpReader:
         :rtype: str
         """
         return self.handler.get_metadata().get('xml:lang')
+
+    def get_base_url(self):
+        """
+        :rtype: str
+        """
+        return self.handler.get_base_url()
 
 
 class DumpReaderArticles(DumpReader):
