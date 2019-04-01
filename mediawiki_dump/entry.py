@@ -4,15 +4,18 @@ A class representing dump entry
 from. utils import parse_date_string
 
 
+# pylint: disable=too-many-instance-attributes
 class DumpEntry:
     """
     An entry in XML dump
     """
     # pylint: disable=too-many-arguments
-    def __init__(self, namespace, page_id, title, content, revision_id, timestamp, contributor):
+    def __init__(self, namespace, page_id, url, title,
+                 content, revision_id, timestamp, contributor):
         """
         :type namespace int
         :type page_id int
+        :type url str
         :type title str
         :type content str
         :type revision_id int
@@ -21,6 +24,7 @@ class DumpEntry:
         """
         self.namespace = namespace
         self.page_id = page_id
+        self.url = url
         self.title = title
         self.content = content
         self.revision_id = revision_id
