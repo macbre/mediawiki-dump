@@ -46,10 +46,12 @@ def test_wikipedia():
     assert isinstance(pages[0], DumpEntry)
 
     assert reader.get_dump_language() == 'fo'
+    assert reader.get_base_url() == 'https://fo.wikipedia.org/wiki/'
 
     entry = pages[0]
     assert entry.namespace == 8  # ns
     assert entry.page_id == 121  # page_id
+    assert entry.url == 'https://fo.wikipedia.org/wiki/MediaWiki:Logouttext'
     assert entry.title == 'MediaWiki:Logouttext'  # title
     assert str(entry.content).startswith('Tú hevur nú ritað út.')   # content
     assert entry.revision_id == 18683  # revision ID
@@ -60,6 +62,7 @@ def test_wikipedia():
     assert entry.namespace == 0  # ns
     assert entry.page_id == 2201  # page_id
     assert entry.title == 'Klaksvíkar kommuna'  # title
+    assert entry.url == 'https://fo.wikipedia.org/wiki/Klaksvíkar_kommuna'
     assert str(entry.content).startswith('{{Infoboks Kommuna|\nnavn              = Klaksvíkar kommuna|')   # content
     assert entry.revision_id == 341301  # revision ID
     assert entry.unix_timestamp == 1478696410  # revision UNIX timestamp
@@ -74,6 +77,7 @@ def test_wikia():
     print(pages)
 
     assert reader.get_dump_language() == 'pl'
+    # assert reader.get_base_url() == 'http:///geo-db-g-slave.query.consul/pl/wiki/'
 
     assert len(pages) == 3, "Dump has three items"
 
@@ -110,6 +114,9 @@ def test_plain_dump():
 
     pages = list(reader.read(dump))
     print(pages)
+
+    assert reader.get_dump_language() == 'en'
+    assert reader.get_base_url() == 'https://pl.wikipedia.org/wiki/'
 
     assert len(pages) == 3, "There are three entries in the dump, but only two pages"
 
