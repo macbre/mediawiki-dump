@@ -162,3 +162,33 @@ class WikiaDump(BaseDump):
                 for entry in archive:
                     for block in entry.get_blocks():
                         yield block
+
+
+class LocalFileDump(BaseDump):
+    """
+    This class can be used to load locally stored XML dump file
+    """
+    def __init__(self, dump_file: str):
+        super(LocalFileDump, self).__init__('')
+        self.dump_file = dump_file
+
+    def get_url(self):
+        pass
+
+    def get_content(self):
+        return open(self.dump_file, 'rt')
+
+
+class LocalWikipediaDump(WikipediaDump):
+    """
+    This class can be used to load locally stored XML, bz2 compressed dump file
+    """
+    def __init__(self, dump_file: str):
+        super(LocalWikipediaDump, self).__init__('')
+        self.dump_file = dump_file
+
+    def get_url(self):
+        pass
+
+    def fetch(self):
+        return open(self.dump_file, 'rb')
