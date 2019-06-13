@@ -1,17 +1,6 @@
-from mediawiki_dump.dumps import WikiaDump, WikipediaDump
+from mediawiki_dump.dumps import WikiaDump, LocalFileDump, LocalWikipediaDump
 from mediawiki_dump.entry import DumpEntry
 from mediawiki_dump.reader import DumpReader, DumpReaderArticles
-
-
-class WikipediaDumpFixture(WikipediaDump):
-    def __init__(self):
-        super(WikipediaDumpFixture, self).__init__('')
-
-    def get_url(self):
-        pass
-
-    def fetch(self):
-        return open('test/fixtures/dump.xml.bz2', 'rb')
 
 
 class WikiaDumpFixture(WikiaDump):
@@ -25,19 +14,8 @@ class WikiaDumpFixture(WikiaDump):
         return open('test/fixtures/dump.xml.7z', 'rb')
 
 
-class PlainDumpFixture(WikiaDump):
-    def __init__(self):
-        super(PlainDumpFixture, self).__init__('')
-
-    def get_url(self):
-        pass
-
-    def get_content(self):
-        return open('test/fixtures/dump.xml', 'rt')
-
-
 def test_wikipedia():
-    dump = WikipediaDumpFixture()
+    dump = LocalWikipediaDump(dump_file='test/fixtures/dump.xml.bz2')
     reader = DumpReader()
 
     pages = list(reader.read(dump))
@@ -109,7 +87,7 @@ def test_wikia_content_pages():
 
 
 def test_plain_dump():
-    dump = PlainDumpFixture()
+    dump = LocalFileDump(dump_file='test/fixtures/dump.xml')
     reader = DumpReaderArticles()
 
     pages = list(reader.read(dump))
