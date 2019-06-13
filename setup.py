@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-VERSION = '0.6.4'
+VERSION = '0.6.5'
 
 # @see https://packaging.python.org/tutorials/packaging-projects/#creating-setup-py
 with open("README.md", "r") as fh:
@@ -45,11 +45,11 @@ setup(
         'dev': [
             'coverage==4.5.3',
             'pylint==2.3.1',
-            'pytest==4.3.1',
+            'pytest==4.6.3',
         ]
     },
     install_requires=[
         'libarchive-c==2.8',
-        'requests==2.20.0',
+        'requests==2.22.0',
     ]
 )
