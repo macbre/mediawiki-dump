@@ -10,6 +10,7 @@ from hashlib import md5
 from os.path import isfile
 from tempfile import gettempdir
 
+from mwclient import Site
 import requests
 from requests.exceptions import HTTPError
 
@@ -64,6 +65,8 @@ class BaseDump:
 
     def fetch(self):
         """
+        This method should be used internally only. Clients should call get_content().
+
         :rtype: _io.TextIOWrapper
         """
         url = self.get_url()
@@ -193,3 +196,41 @@ class LocalWikipediaDump(WikipediaDump):
 
     def fetch(self):
         return open(self.dump_file, 'rb')
+
+
+class MediaWikiClientDump(BaseDump):
+    """
+    This class can be used to fetch "live" dumps from articles on any MediaWiki-powered site
+    by using mwclient library
+    """
+    def __init__(self, site: Site, articles: Generator[str, None, None]):
+        """You must provide a mwclient.Site instance and a generator that yields article names
+        """
+        # https://mwclient.readthedocs.io/en/latest/index.html
+        super(MediaWikiClientDump, self).__init__('')
+
+        self.site = site
+        self.articles = list(articles)
+
+    def get_url(self) -> str:
+        return self.site.host  # e.g. vim.wikia.com
+
+    def get_content(self) -> str:
+        return self.fetch()
+
+    def fetch(self) -> str:
+        self.logger.info('Fetching %d pages from %s wiki',
+                         len(self.articles), self.get_url())
+
+        # https://www.mediawiki.org/wiki/Manual:Parameters_to_Special:Export
+        resp = self.site.raw_call(
+            script='index',
+            data=dict(
+                title='Special:Export',
+                curonly='1',
+                pages='\n'.join(self.articles),
+            ),
+            http_method='GET'
+        )
+
+        return resp
