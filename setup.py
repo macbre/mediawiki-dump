@@ -45,7 +45,7 @@ setup(
         'dev': [
             'coverage==4.5.3',
             'pylint==2.3.1',
-            'pytest==4.6.3',
+            'pytest==5.0.1',
         ]
     },
     install_requires=[
