@@ -10,18 +10,8 @@ class DumpEntry:
     An entry in XML dump
     """
     # pylint: disable=too-many-arguments
-    def __init__(self, namespace, page_id, url, title,
-                 content, revision_id, timestamp, contributor):
-        """
-        :type namespace int
-        :type page_id int
-        :type url str
-        :type title str
-        :type content str
-        :type revision_id int
-        :type timestamp str
-        :type contributor str|None
-        """
+    def __init__(self, namespace: int, page_id: int, url: str, title: str,
+                 content: str, revision_id: int, timestamp: str, contributor: str = None):
         self.namespace = namespace
         self.page_id = page_id
         self.url = url
@@ -32,22 +22,17 @@ class DumpEntry:
         self.contributor = contributor
 
     @property
-    def unix_timestamp(self):
-        """
-        :rtype: float
+    def unix_timestamp(self) -> float:
+        """When was given article most recently edited
         """
         return parse_date_string(self.timestamp).timestamp()
 
-    def is_anon(self):
-        """
-        :rtype: bool
+    def is_anon(self) -> bool:
+        """Was this edit made by an anonymous contributor?
         """
         return self.contributor is None
 
-    def __repr__(self):
-        """
-        :rtype: str
-        """
+    def __repr__(self) -> str:
         return '<{} "{}" by {} at {}>'.format(
             self.__class__.__name__,
             self.title,
