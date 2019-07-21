@@ -4,6 +4,8 @@ CLasses that support fetching dumps
 import bz2
 import logging
 
+from typing import Generator
+
 from hashlib import md5
 from os.path import isfile
 from tempfile import gettempdir
@@ -103,9 +105,8 @@ class BaseDump:
         # return a stream of compressed data from the cache file
         return open(cache_filename, 'rb')
 
-    def get_content(self):
-        """
-        :rtype: list[str]
+    def get_content(self) -> Generator[str, None, None]:
+        """Yields processed pieces of content
         """
         raise NotImplementedError('fetch method needs to be implemented')
 
@@ -120,9 +121,8 @@ class WikipediaDump(BaseDump):
             format(wiki='{}wiki'.format(self.wiki),
                    version='history' if self.full_history else 'current')
 
-    def get_content(self):
-        """
-        :rtype: list[str]
+    def get_content(self) -> Generator[str, None, None]:
+        """Yields processed pieces of content
         """
         # https://docs.python.org/3.6/library/bz2.html#bz2.BZ2Decompressor
         decompressor = bz2.BZ2Decompressor()
@@ -140,15 +140,14 @@ class WikiaDump(BaseDump):
     """
     ARCHIVE_FORMAT = '7z'
 
-    def get_url(self):
+    def get_url(self) -> str:
         # https://muppet.wikia.com/wiki/Special:Statistics
         return 'https://s3.amazonaws.com/wikia_xml_dumps/{}/{}/{}_pages_{version}.xml.7z'.format(
             self.wiki[0], self.wiki[:2], self.wiki,
             version='full' if self.full_history else 'current')
 
-    def get_content(self):
-        """
-        :rtype: list[str]
+    def get_content(self) -> Generator[str, None, None]:
+        """Yields processed pieces of content
         """
         # https://github.com/Changaco/python-libarchive-c#usage
         try:
@@ -176,6 +175,8 @@ class LocalFileDump(BaseDump):
         pass
 
     def get_content(self):
+        """Yields processed pieces of content
+        """
         return open(self.dump_file, 'rt')
 
 

@@ -2,12 +2,13 @@
 Cleans and tokenizes given text
 """
 import re
+from typing import Callable, List
 
 
-def clean(text):
-    """
-    :type text str
-    :rtype: str
+def clean(text: str) -> str:
+    """Cleans up the provided wikitext.
+    Removes templates, tables, parser hooks, magic words, HTML tags and file embeds.
+    Keeps links.
     """
     # basic formatting
     text = re.sub(r"'''?([^']+)'''?", '\\1', text)
@@ -81,10 +82,8 @@ def clean(text):
     return text.strip()
 
 
-def tokenize_filter(text):
-    """
-    :type text str
-    :rtype: bool
+def tokenize_filter(text: str) -> bool:
+    """Used by tokenize function below. Ignores numbers when tokenizing cleaned up wikitext.
     """
     if text == '':
         return False
@@ -95,11 +94,8 @@ def tokenize_filter(text):
     return True
 
 
-def tokenize(text, filter_func=tokenize_filter):
-    """
-    :type text str
-    :type filter_func callable
-    :rtype: list[str]
+def tokenize(text: str, filter_func: Callable = tokenize_filter) -> List[str]:
+    """Tokenizes a given text. Usually you want to first pass it via clean() function.
     """
     # clean up the text
     text = re.sub(r'[?.,:;!()=+"]', ' ', text)  # remove noise

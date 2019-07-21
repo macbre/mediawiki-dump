@@ -4,10 +4,13 @@ Class used to parse provided XML dump and emit a stream of articles content
 https://gist.github.com/macbre/1543d945f5244c5c68681966f07e2d6c
 """
 import logging
+from typing import Generator
 
 from xml import sax
+from xml.sax.xmlreader import AttributesImpl
 
-from. entry import DumpEntry
+from .dumps import BaseDump
+from .entry import DumpEntry
 
 
 class DumpHandler(sax.ContentHandler):
@@ -86,10 +89,9 @@ class DumpHandler(sax.ContentHandler):
         self.current_content = ''
         self.current_contributor = None
 
-    def startElement(self, name, attrs):
+    def startElement(self, name: str, attrs: AttributesImpl):
         """
-        :type name str
-        :type attrs xml.sax.xmlreader.AttributesImpl
+        Run when a parser enters new element
         """
         # print('>', name, attrs)
         # self.logger.info('> startElement %s %s', name, attrs)
@@ -108,7 +110,7 @@ class DumpHandler(sax.ContentHandler):
         self.tag_content = ''
 
     # pylint: disable=too-many-branches
-    def endElement(self, name):
+    def endElement(self, name: str):
         # print('<', name, self.tag_content)
         # self.logger.info('< endElement %s (%s)', name, self.tag_content)
 
@@ -167,13 +169,13 @@ class DumpHandler(sax.ContentHandler):
             if name in ['dbname', 'base', 'generator']:
                 self.siteinfo[name] = self.tag_content
 
-    def characters(self, content):
+    def characters(self, content: str):
         # print('=', content)
         # self.logger.info('= characters %s', content)
 
         self.tag_content += content
 
-    def get_entries(self):
+    def get_entries(self) -> Generator[tuple, None, None]:
         """
         Used by DumpReader to yield pages as we parse the XML dump
         """
@@ -182,25 +184,25 @@ class DumpHandler(sax.ContentHandler):
 
         self.entries_batch = []
 
-    def get_entries_count(self):
+    def get_entries_count(self) -> int:
         """
         :rtype: int
         """
         return self.entries_count
 
-    def get_metadata(self):
+    def get_metadata(self) -> dict:
         """
         :rtype: dict|None
         """
         return self.metadata
 
-    def get_siteinfo(self):
+    def get_siteinfo(self) -> dict:
         """
         :rtype: dict
         """
         return self.siteinfo
 
-    def get_base_url(self):
+    def get_base_url(self) -> str:
         """
         :rtype: str
         """
@@ -225,17 +227,15 @@ class DumpReader:
         self.handler = DumpHandler()
 
     @staticmethod
-    def filter_by_namespace(namespace):
+    def filter_by_namespace(namespace: int) -> bool:
         """
         :type namespace int
         :rtype bool
         """
         return isinstance(namespace, int)
 
-    def read(self, dump):
-        """
-        :type dump mediawiki_dump.dumps.BaseDump
-        :rtype: list[DumpEntry]
+    def read(self, dump: BaseDump) -> Generator[DumpEntry, None, None]:
+        """Read a dump and emit DumpEntry objects
         """
         self.logger.info('Parsing XML dump...')
 
@@ -264,13 +264,13 @@ class DumpReader:
 
         self.logger.info('Parsing completed, entries found: %d', self.handler.get_entries_count())
 
-    def get_dump_language(self):
+    def get_dump_language(self) -> str:
         """
         :rtype: str
         """
         return self.handler.get_metadata().get('xml:lang')
 
-    def get_base_url(self):
+    def get_base_url(self) -> str:
         """
         :rtype: str
         """
@@ -282,9 +282,7 @@ class DumpReaderArticles(DumpReader):
     Use this class to get article pages only
     """
     @staticmethod
-    def filter_by_namespace(namespace):
-        """
-        :type namespace int
-        :rtype bool
+    def filter_by_namespace(namespace: int) -> bool:
+        """Process NS_MAIN articles only
         """
         return namespace == 0
