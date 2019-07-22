@@ -51,5 +51,6 @@ setup(
     install_requires=[
         'libarchive-c==2.8',
         'requests==2.22.0',
+        'mwclient==0.9.3',
     ]
 )

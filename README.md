@@ -153,3 +153,29 @@ INFO:DumpReaderArticles:Parsing completed, entries found: 384
 <DumpEntry "Lua" by Macbre at 2018-09-11T14:14:24+00:00>
 <DumpEntry "Lua" by Macbre at 2018-09-11T14:14:37+00:00>
 ```
+
+## Reading dumps of selected articles
+
+You can use [`mwclient` Python library](https://mwclient.readthedocs.io/en/latest/index.html)
+and fetch "live" dumps of selected articles from any MediaWiki-powered site.
+
+```python
+import mwclient
+site = mwclient.Site('vim.fandom.com', path='/')
+
+from mediawiki_dump.dumps import MediaWikiClientDump
+from mediawiki_dump.reader import DumpReaderArticles
+
+dump = MediaWikiClientDump(site, ['Vim documentation', 'Tutorial'])
+
+pages = DumpReaderArticles().read(dump)
+
+print('\n'.join([repr(page) for page in pages]))
+```
+
+Will give you:
+
+```
+<DumpEntry "Vim documentation" by Anonymous at 2019-07-05T09:39:47+00:00>
+<DumpEntry "Tutorial" by Anonymous at 2019-07-05T09:41:19+00:00>
+```

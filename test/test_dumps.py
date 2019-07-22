@@ -1,4 +1,7 @@
-from mediawiki_dump.dumps import WikipediaDump, WikiaDump
+from mwclient import Site
+
+from mediawiki_dump.dumps import WikipediaDump, WikiaDump, MediaWikiClientDump
+from mediawiki_dump.reader import DumpReader
 
 
 def test_dump_get_url():
@@ -29,3 +32,14 @@ def test_get_cache_filename():
 
     dump = WikipediaDump('en', full_history=True)
     assert dump.get_cache_filename(dump.get_url()) == 'mediawiki_dump_84ec5ef573e2d2666b97f82874ae5d67.bz2'
+
+
+def test_mediawiki_client_dump():
+    """Integration test for MediaWikiClientDump class"""
+    wiki = Site(host='vim.fandom.com', path='/')
+    dump = MediaWikiClientDump(wiki, articles=['Vim scripts', 'Vim_documentation'])
+
+    pages = [entry.title for entry in DumpReader().read(dump)]
+
+    print(dump, pages)
+    assert pages == ['Vim scripts', 'Vim documentation']
