@@ -37,7 +37,7 @@ def test_get_cache_filename():
 def test_mediawiki_client_dump():
     """Integration test for MediaWikiClientDump class"""
     wiki = Site(host='vim.fandom.com', path='/')
-    dump = MediaWikiClientDump(wiki, articles=['Vim scripts', 'Vim_documentation'])
+    dump = MediaWikiClientDump(wiki, articles=map(str, ['Vim scripts', 'Vim_documentation']))
 
     pages = [entry.title for entry in DumpReader().read(dump)]
 

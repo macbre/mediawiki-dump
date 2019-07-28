@@ -4,7 +4,7 @@ CLasses that support fetching dumps
 import bz2
 import logging
 
-from typing import Generator
+from typing import Generator, Iterator
 
 from hashlib import md5
 from os.path import isfile
@@ -203,8 +203,8 @@ class MediaWikiClientDump(BaseDump):
     This class can be used to fetch "live" dumps from articles on any MediaWiki-powered site
     by using mwclient library
     """
-    def __init__(self, site: Site, articles: Generator[str, None, None]):
-        """You must provide a mwclient.Site instance and a generator that yields article names
+    def __init__(self, site: Site, articles: Iterator[str]):
+        """You must provide a mwclient.Site instance and a iterator that yields article names
         """
         # https://mwclient.readthedocs.io/en/latest/index.html
         super(MediaWikiClientDump, self).__init__('')
