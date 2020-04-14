@@ -17,7 +17,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     keywords='dump fandom mediawiki wikipedia wikia',
-    url='https://github.com/macbre/mediawiki_dump',
+    url='https://github.com/macbre/mediawiki-dump',
     # https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
         # How mature is this project? Common values are
