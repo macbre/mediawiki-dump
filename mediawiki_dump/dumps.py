@@ -154,6 +154,7 @@ class WikiaDump(BaseDump):
         """
         # https://github.com/Changaco/python-libarchive-c#usage
         try:
+            # pylint:disable=import-outside-toplevel
             import libarchive
         except AttributeError as ex:
             # AttributeError: undefined symbol: archive_errno
