@@ -1,6 +1,6 @@
 from mwclient import Site
 
-from mediawiki_dump.dumps import WikipediaDump, WikiaDump, MediaWikiClientDump
+from mediawiki_dump.dumps import WikipediaDump, WikiaDump, MediaWikiClientDump, StringDump
 from mediawiki_dump.reader import DumpReader
 
 
@@ -43,3 +43,7 @@ def test_mediawiki_client_dump():
 
     print(dump, pages)
     assert pages == ['Vim scripts', 'Vim documentation']
+
+def test_string_dump():
+    assert StringDump('foo').get_content() == 'foo'
+    assert StringDump('foobarbaz').get_content() != 'foo'

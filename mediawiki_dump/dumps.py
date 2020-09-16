@@ -188,6 +188,7 @@ class StringDump(BaseDump):
     """
 
     def __init__(self, dump: str):
+        super(StringDump, self).__init__('')
         self.content = dump
 
     def get_url(self):
