@@ -1,4 +1,4 @@
-name: Tests
+name: Code formatting
 
 on:
   push:
@@ -18,14 +18,7 @@ jobs:
       with:
         python-version: 3.8
 
-    - name: Install dependencies
+    - name: Check code formatting
       run: |
-        sudo apt install libarchive-dev
-        python -m pip install --upgrade pip
-        pip install -e .[dev]
-
-    - name: Lint with pylint
-      run: make lint
-
-    - name: Test with pytest
-      run: make test
+        pip install black==20.8b1
+        black --check .
