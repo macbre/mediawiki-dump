@@ -182,6 +182,21 @@ class LocalFileDump(BaseDump):
         """
         return open(self.dump_file, 'rt')
 
+class StringDump(BaseDump):
+    """
+    This class can be used to load XML from a variable
+    """
+    def __init__(self, dump: str):
+        super(StringDump, self).__init__('')
+        self.content = dump
+
+    def get_url(self):
+        pass
+
+    def get_content(self):
+        """ Return the passed string
+        """
+        return self.content
 
 class LocalWikipediaDump(WikipediaDump):
     """
