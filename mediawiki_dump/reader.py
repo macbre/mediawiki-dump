@@ -61,15 +61,15 @@ class DumpHandler(sax.ContentHandler):
         self.in_contributor = False
 
         # concatenated content of tags
-        self.tag_content = ''
+        self.tag_content = ""
 
         # currently parsed page dump
-        self.current_title = ''
+        self.current_title = ""
         self.current_namespace = 0
         self.current_page_id = 0
         self.current_revision_id = 0
         self.current_revision_timestamp = 0
-        self.current_content = ''
+        self.current_content = ""
         self.current_contributor = None
 
     def reset_state(self):
@@ -81,12 +81,12 @@ class DumpHandler(sax.ContentHandler):
         self.in_revision = False
         self.in_contributor = False
 
-        self.current_title = ''
+        self.current_title = ""
         self.current_namespace = 0
         self.current_page_id = 0
         self.current_revision_id = 0
         self.current_revision_timestamp = 0
-        self.current_content = ''
+        self.current_content = ""
         self.current_contributor = None
 
     def startElement(self, name: str, attrs: AttributesImpl):
@@ -96,77 +96,79 @@ class DumpHandler(sax.ContentHandler):
         # print('>', name, attrs)
         # self.logger.info('> startElement %s %s', name, attrs)
 
-        if name == 'siteinfo':
+        if name == "siteinfo":
             self.in_siteinfo = True
-        elif name == 'page':
+        elif name == "page":
             self.in_page = True
-        elif name == 'revision':
+        elif name == "revision":
             self.in_revision = True
-        elif name == 'contributor':
+        elif name == "contributor":
             self.in_contributor = True
-        elif name == 'mediawiki':
+        elif name == "mediawiki":
             self.metadata = dict(zip(attrs.keys(), attrs.values()))
 
-        self.tag_content = ''
+        self.tag_content = ""
 
     # pylint: disable=too-many-branches
     def endElement(self, name: str):
         # print('<', name, self.tag_content)
         # self.logger.info('< endElement %s (%s)', name, self.tag_content)
 
-        if name == 'siteinfo':
+        if name == "siteinfo":
             self.in_siteinfo = False
             self.reset_state()
             return
-        if name == 'page':
+        if name == "page":
             self.in_page = False
             self.reset_state()
             return
-        if name == 'revision':
+        if name == "revision":
             self.in_revision = False
 
             # add next entry information
-            self.logger.debug('Page #%d: %s', self.current_page_id, self.current_title)
+            self.logger.debug("Page #%d: %s", self.current_page_id, self.current_title)
 
             # build entry URL
-            url = self.get_base_url() + self.current_title.replace(' ', '_')
+            url = self.get_base_url() + self.current_title.replace(" ", "_")
 
-            self.entries_batch.append((
-                self.current_namespace,
-                self.current_page_id,
-                url,
-                self.current_title,
-                self.current_content,
-                self.current_revision_id,
-                self.current_revision_timestamp,
-                self.current_contributor,
-            ))
+            self.entries_batch.append(
+                (
+                    self.current_namespace,
+                    self.current_page_id,
+                    url,
+                    self.current_title,
+                    self.current_content,
+                    self.current_revision_id,
+                    self.current_revision_timestamp,
+                    self.current_contributor,
+                )
+            )
 
             self.entries_count += 1
             return
-        if name == 'contributor':
+        if name == "contributor":
             self.in_contributor = False
             return
 
         if self.in_contributor:
-            if name == 'username':
+            if name == "username":
                 self.current_contributor = self.tag_content
         elif self.in_revision:
-            if name == 'id':
+            if name == "id":
                 self.current_revision_id = int(self.tag_content)
-            elif name == 'timestamp':
+            elif name == "timestamp":
                 self.current_revision_timestamp = self.tag_content
-            elif name == 'text':
+            elif name == "text":
                 self.current_content = self.tag_content
         elif self.in_page:
-            if name == 'title':
+            if name == "title":
                 self.current_title = self.tag_content
-            elif name == 'ns':
+            elif name == "ns":
                 self.current_namespace = int(self.tag_content)
-            elif name == 'id':
+            elif name == "id":
                 self.current_page_id = int(self.tag_content)
         elif self.in_siteinfo:
-            if name in ['dbname', 'base', 'generator']:
+            if name in ["dbname", "base", "generator"]:
                 self.siteinfo[name] = self.tag_content
 
     def characters(self, content: str):
@@ -209,9 +211,9 @@ class DumpHandler(sax.ContentHandler):
         # e.g. base URL <https://pl.wikipedia.org/wiki/Wikipedia:Strona_g%C5%82%C3%B3wna>
         # will return <https://pl.wikipedia.org/wiki/>
         if self.base_url is None:
-            main_page = str(self.siteinfo.get('base'))
-            self.base_url = '/'.join(main_page.split('/')[0:-1])
-            self.base_url += '/'  # ends with slash
+            main_page = str(self.siteinfo.get("base"))
+            self.base_url = "/".join(main_page.split("/")[0:-1])
+            self.base_url += "/"  # ends with slash
 
         return self.base_url
 
@@ -220,6 +222,7 @@ class DumpReader:
     """
     This class uses provided BaseDump instance to read and parse MediaWiki's XML dump
     """
+
     def __init__(self):
         self.logger = logging.getLogger(self.__class__.__name__)
 
@@ -235,9 +238,8 @@ class DumpReader:
         return isinstance(namespace, int)
 
     def read(self, dump: BaseDump) -> Generator[DumpEntry, None, None]:
-        """Read a dump and emit DumpEntry objects
-        """
-        self.logger.info('Parsing XML dump...')
+        """Read a dump and emit DumpEntry objects"""
+        self.logger.info("Parsing XML dump...")
 
         parser = sax.make_parser()
         parser.setContentHandler(self.handler)
@@ -247,28 +249,44 @@ class DumpReader:
 
             # yield pages as we go through XML stream
             for page in self.handler.get_entries():
-                (namespace, page_id, url, title,
-                 content, revision_id, revision_timestamp, contributor) = page
+                (
+                    namespace,
+                    page_id,
+                    url,
+                    title,
+                    content,
+                    revision_id,
+                    revision_timestamp,
+                    contributor,
+                ) = page
 
                 if self.filter_by_namespace(namespace):
 
-                    if content == '':
+                    if content == "":
                         # https://fo.wikipedia.org/wiki/Kjak:L%C3%ADvfr%C3%B8%C3%B0i
-                        self.logger.warning('Page #%d: %s is empty', page_id, title)
+                        self.logger.warning("Page #%d: %s is empty", page_id, title)
                         continue
 
                     yield DumpEntry(
-                        namespace, page_id, url, title, content,
-                        revision_id, revision_timestamp, contributor
+                        namespace,
+                        page_id,
+                        url,
+                        title,
+                        content,
+                        revision_id,
+                        revision_timestamp,
+                        contributor,
                     )
 
-        self.logger.info('Parsing completed, entries found: %d', self.handler.get_entries_count())
+        self.logger.info(
+            "Parsing completed, entries found: %d", self.handler.get_entries_count()
+        )
 
     def get_dump_language(self) -> str:
         """
         :rtype: str
         """
-        return self.handler.get_metadata().get('xml:lang')
+        return self.handler.get_metadata().get("xml:lang")
 
     def get_base_url(self) -> str:
         """
@@ -281,8 +299,8 @@ class DumpReaderArticles(DumpReader):
     """
     Use this class to get article pages only
     """
+
     @staticmethod
     def filter_by_namespace(namespace: int) -> bool:
-        """Process NS_MAIN articles only
-        """
+        """Process NS_MAIN articles only"""
         return namespace == 0
