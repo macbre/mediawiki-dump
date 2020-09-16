@@ -41,7 +41,7 @@ class DumpHandler(sax.ContentHandler):
 
     # pylint: disable=too-many-instance-attributes
     def __init__(self):
-        super(DumpHandler, self).__init__()
+        super().__init__()
         self.logger = logging.getLogger(self.__class__.__name__)
 
         self.entries_batch = []
