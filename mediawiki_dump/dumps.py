@@ -186,7 +186,6 @@ class StringDump(BaseDump):
     """
     This class can be used to load XML from a variable
     """
-
     def __init__(self, dump: str):
         super(StringDump, self).__init__('')
         self.content = dump
