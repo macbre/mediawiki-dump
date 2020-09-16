@@ -45,11 +45,11 @@ setup(
         'dev': [
             'coverage>=4.5.3',
             'pylint>=2.3.1',
-            'pytest>=5.0.1',
+            'pytest>=6.0.2',
         ]
     },
     install_requires=[
-        'libarchive-c>=2.8',
+        'libarchive-c==2.9',
         'requests>=2.22.0',
         'mwclient>=0.9.3',
     ]
