@@ -88,7 +88,7 @@ class BaseDump:
             except HTTPError as ex:
                 self.logger.error('Failed to fetch a dump', exc_info=True)
                 raise DumpError('Failed to fetch a dump, request ended with HTTP {}'.
-                                format(ex.response.status_code))
+                                format(ex.response.status_code)) from ex
 
             # read the response as a stream and put it into cache file
             # http://docs.python-requests.org/en/master/user/advanced/#body-content-workflow
@@ -155,9 +155,9 @@ class WikiaDump(BaseDump):
         # https://github.com/Changaco/python-libarchive-c#usage
         try:
             import libarchive
-        except AttributeError:
+        except AttributeError as ex:
             # AttributeError: undefined symbol: archive_errno
-            raise DumpError("Failed to import libarchive with 7zip support")
+            raise DumpError("Failed to import libarchive with 7zip support") from ex
 
         with self.fetch() as handler:
             with libarchive.file_reader(handler.name) as archive:
@@ -171,7 +171,7 @@ class LocalFileDump(BaseDump):
     This class can be used to load locally stored XML dump file
     """
     def __init__(self, dump_file: str):
-        super(LocalFileDump, self).__init__('')
+        super().__init__('')
         self.dump_file = dump_file
 
     def get_url(self):
@@ -187,7 +187,7 @@ class StringDump(BaseDump):
     This class can be used to load XML from a variable
     """
     def __init__(self, dump: str):
-        super(StringDump, self).__init__('')
+        super().__init__('')
         self.content = dump
 
     def get_url(self):
@@ -203,7 +203,7 @@ class LocalWikipediaDump(WikipediaDump):
     This class can be used to load locally stored XML, bz2 compressed dump file
     """
     def __init__(self, dump_file: str):
-        super(LocalWikipediaDump, self).__init__('')
+        super().__init__('')
         self.dump_file = dump_file
 
     def get_url(self):
@@ -222,7 +222,7 @@ class MediaWikiClientDump(BaseDump):
         """You must provide a mwclient.Site instance and a iterator that yields article names
         """
         # https://mwclient.readthedocs.io/en/latest/index.html
-        super(MediaWikiClientDump, self).__init__('')
+        super().__init__('')
 
         self.site = site
         self.articles = list(articles)
