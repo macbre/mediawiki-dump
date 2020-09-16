@@ -1,5 +1,4 @@
 # mediawiki-dump
-[![Build Status](https://travis-ci.org/macbre/mediawiki-dump.svg?branch=master)](https://travis-ci.org/macbre/mediawiki-dump)
 
 ```
 pip install mediawiki_dump
