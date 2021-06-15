@@ -115,6 +115,7 @@ class BaseDump:
             self.logger.info("Reading from cache")
 
         # return a stream of compressed data from the cache file
+        # pylint:disable=consider-using-with
         return open(cache_filename, "rb")
 
     def get_content(self) -> Generator[str, None, None]:
@@ -195,6 +196,7 @@ class LocalFileDump(BaseDump):
 
     def get_content(self):
         """Yields processed pieces of content"""
+        # pylint:disable=consider-using-with
         return open(self.dump_file, "rt")
 
 
@@ -228,6 +230,7 @@ class LocalWikipediaDump(WikipediaDump):
         pass
 
     def fetch(self):
+        # pylint:disable=consider-using-with
         return open(self.dump_file, "rb")
 
 
