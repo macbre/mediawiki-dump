@@ -42,14 +42,14 @@ setup(
     extras_require={
         "dev": [
             "black==21.8b0",
-            "coverage>=4.5.3",
-            "pylint>=2.3.1",
-            "pytest>=6.0.2",
+            "coverage==5.5",
+            "pylint==2.10.2",
+            "pytest==6.2.4",
         ]
     },
     install_requires=[
         "libarchive-c==3.1",
-        "requests>=2.22.0",
-        "mwclient>=0.9.3",
+        "requests==2.26.0",
+        "mwclient==0.10.1",
     ],
 )
