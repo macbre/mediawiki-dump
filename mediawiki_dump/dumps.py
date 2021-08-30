@@ -197,7 +197,7 @@ class LocalFileDump(BaseDump):
     def get_content(self):
         """Yields processed pieces of content"""
         # pylint:disable=consider-using-with
-        return open(self.dump_file, "rt")
+        return open(self.dump_file, mode="rt", encoding="utf-8")
 
 
 class StringDump(BaseDump):
