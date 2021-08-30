@@ -1,4 +1,6 @@
 # mediawiki-dump
+[![CI](https://github.com/macbre/mediawiki-dump/actions/workflows/tests.yml/badge.svg)](https://github.com/macbre/mediawiki-dump/actions/workflows/tests.yml)
+[![Coverage Status](https://coveralls.io/repos/github/macbre/mediawiki-dump/badge.svg?branch=master)](https://coveralls.io/github/macbre/mediawiki-dump?branch=master)
 
 ```
 pip install mediawiki_dump
