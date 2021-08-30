@@ -1,4 +1,6 @@
 # mediawiki-dump
+[![PyPI](https://img.shields.io/pypi/v/mediawiki_dump.svg)](https://pypi.python.org/pypi/mediawiki_dump)
+[![Downloads](https://pepy.tech/badge/mediawiki_dump)](https://pepy.tech/project/mediawiki_dump)
 [![CI](https://github.com/macbre/mediawiki-dump/actions/workflows/tests.yml/badge.svg)](https://github.com/macbre/mediawiki-dump/actions/workflows/tests.yml)
 [![Coverage Status](https://coveralls.io/repos/github/macbre/mediawiki-dump/badge.svg?branch=master)](https://coveralls.io/github/macbre/mediawiki-dump?branch=master)
 
