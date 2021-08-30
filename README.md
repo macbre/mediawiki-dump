@@ -8,7 +8,7 @@ pip install mediawiki_dump
 
 [Python3 package](https://pypi.org/project/mediawiki_dump/) for working with [MediaWiki XML content dumps](https://www.mediawiki.org/wiki/Manual:Backing_up_a_wiki#Backup_the_content_of_the_wiki_(XML_dump)).
 
-Wikipedia (bz2 compressed) and Wikia (7zip) content dumps are supported.
+[Wikipedia](https://dumps.wikimedia.org/) (bz2 compressed) and [Wikia](https://community.fandom.com/wiki/Help:Database_download) (7zip) content dumps are supported.
 
 ## Dependencies
 
