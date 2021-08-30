@@ -51,7 +51,7 @@ class DumpHandler(sax.ContentHandler):
         self.metadata = None
 
         # nodes from <siteinfo> XML tag
-        self.siteinfo = dict()
+        self.siteinfo = {}
         self.base_url = None
 
         # parser state, are we inside <page> or <revision> tag?
