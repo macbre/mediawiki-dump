@@ -41,7 +41,7 @@ setup(
     packages=find_packages(),
     extras_require={
         "dev": [
-            "black==21.8b0",
+            "black==21.9b0",
             "coveralls==3.2.0",
             "pylint==2.10.2",
             "pytest==6.2.5",
