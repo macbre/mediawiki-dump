@@ -101,8 +101,11 @@ def test_plain_dump():
     assert reader.get_base_url() == "https://pl.wikipedia.org/wiki/"
 
     siteinfo = reader.handler.get_siteinfo()
-    assert siteinfo['dbname'] == 'plwiki'
-    assert siteinfo['base'] == 'https://pl.wikipedia.org/wiki/Wikipedia:Strona_g%C5%82%C3%B3wna'
+    assert siteinfo["dbname"] == "plwiki"
+    assert (
+        siteinfo["base"]
+        == "https://pl.wikipedia.org/wiki/Wikipedia:Strona_g%C5%82%C3%B3wna"
+    )
 
     assert len(pages) == 3, "There are three entries in the dump, but only two pages"
 
