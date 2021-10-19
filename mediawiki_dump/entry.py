@@ -41,9 +41,7 @@ class DumpEntry:
         return self.contributor is None
 
     def __repr__(self) -> str:
-        return '<{} "{}" by {} at {}>'.format(
-            self.__class__.__name__,
-            self.title,
-            self.contributor if not self.is_anon() else "Anonymous",
-            parse_date_string(self.timestamp).isoformat(),
-        )
+        contributor = self.contributor if not self.is_anon() else "Anonymous"
+        date = parse_date_string(self.timestamp).isoformat()
+
+        return f'<{self.__class__.__name__} "{self.title}" by {contributor} at {date}>'
