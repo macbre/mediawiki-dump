@@ -156,8 +156,10 @@ class WikiaDump(BaseDump):
         version = "full" if self.full_history else "current"
 
         # https://muppet.wikia.com/wiki/Special:Statistics
-        return f"https://s3.amazonaws.com/wikia_xml_dumps/" \
-               f"{self.wiki[0]}/{self.wiki[:2]}/{self.wiki}_pages_{version}.xml.7z"
+        return (
+            f"https://s3.amazonaws.com/wikia_xml_dumps/"
+            f"{self.wiki[0]}/{self.wiki[:2]}/{self.wiki}_pages_{version}.xml.7z"
+        )
 
     def get_content(self) -> Generator[str, None, None]:
         """Yields processed pieces of content"""
