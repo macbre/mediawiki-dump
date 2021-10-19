@@ -56,9 +56,7 @@ class BaseDump:
         _hash = md5()
         _hash.update(url.encode("utf-8"))
 
-        return "mediawiki_dump_{hash}.{extension}".format(
-            hash=_hash.hexdigest(), extension=self.ARCHIVE_FORMAT
-        )
+        return f"mediawiki_dump_{_hash.hexdigest()}.{self.ARCHIVE_FORMAT}"
 
     def get_url(self):
         """
@@ -74,7 +72,7 @@ class BaseDump:
         """
         url = self.get_url()
 
-        cache_filename = "{}/{}".format(gettempdir(), self.get_cache_filename(url))
+        cache_filename = f"{gettempdir()}/{self.get_cache_filename(url)}"
         self.logger.info("Checking %s cache file...", cache_filename)
 
         # check cache
@@ -94,9 +92,7 @@ class BaseDump:
             except HTTPError as ex:
                 self.logger.error("Failed to fetch a dump", exc_info=True)
                 raise DumpError(
-                    "Failed to fetch a dump, request ended with HTTP {}".format(
-                        ex.response.status_code
-                    )
+                    f"Failed to fetch a dump, request ended with HTTP {ex.response.status_code}"
                 ) from ex
 
             # read the response as a stream and put it into cache file
@@ -129,12 +125,12 @@ class WikipediaDump(BaseDump):
     """
 
     def get_url(self):
+        wiki = f"{self.wiki}wiki"
+        version = "history" if self.full_history else "current"
+
         return (
-            "https://dumps.wikimedia.org/{wiki}/latest/"
-            "{wiki}-latest-pages-meta-{version}.xml.bz2".format(
-                wiki="{}wiki".format(self.wiki),
-                version="history" if self.full_history else "current",
-            )
+            f"https://dumps.wikimedia.org/{wiki}/latest/"
+            f"{wiki}-latest-pages-meta-{version}.xml.bz2"
         )
 
     def get_content(self) -> Generator[str, None, None]:
@@ -157,12 +153,12 @@ class WikiaDump(BaseDump):
     ARCHIVE_FORMAT = "7z"
 
     def get_url(self) -> str:
+        version = "full" if self.full_history else "current"
+
         # https://muppet.wikia.com/wiki/Special:Statistics
-        return "https://s3.amazonaws.com/wikia_xml_dumps/{}/{}/{}_pages_{version}.xml.7z".format(
-            self.wiki[0],
-            self.wiki[:2],
-            self.wiki,
-            version="full" if self.full_history else "current",
+        return (
+            f"https://s3.amazonaws.com/wikia_xml_dumps/"
+            f"{self.wiki[0]}/{self.wiki[:2]}/{self.wiki}_pages_{version}.xml.7z"
         )
 
     def get_content(self) -> Generator[str, None, None]:
