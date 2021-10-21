@@ -1,4 +1,7 @@
+from contextlib import contextmanager
+from typing import ContextManager, AnyStr
 from unittest.mock import patch
+
 
 import pytest
 import responses
@@ -81,22 +84,30 @@ def test_string_dump():
     assert StringDump("foobarbaz").get_content() != "foo"
 
 
+@contextmanager
+def get_dump_with_mocked_http_response(
+    body: AnyStr, status: int = 200
+) -> ContextManager[WikipediaDump]:
+    dump = WikipediaDump(wiki="test")
+
+    with responses.RequestsMock(assert_all_requests_are_fired=True) as mocked_responses:
+        mocked_responses.add(
+            method=responses.GET,
+            url=dump.get_url(),
+            body=body,
+            status=status,
+            headers={"content-length": str(len(body))},
+        )
+
+        yield dump
+
+
 def test_fetch_handles_http_errors():
     # skip file-based caching in BaseDump cache
     # https://docs.python.org/3/library/unittest.mock.html#unittest.mock.patch
     with patch("mediawiki_dump.dumps.isfile", return_value=False) as mocked_method:
 
-        dump = WikipediaDump(wiki="foo")
-
-        with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
-            rsps.add(
-                method=responses.GET,
-                url=dump.get_url(),
-                body="Error",
-                status=500,
-                headers={"content-length": "5"},
-            )
-
+        with get_dump_with_mocked_http_response(body="Error", status=500) as dump:
             with pytest.raises(DumpError) as ex:
                 list(dump.get_content())
 
@@ -110,18 +121,9 @@ def test_fetch_via_mocked_http():
     # https://docs.python.org/3/library/unittest.mock.html#unittest.mock.patch
     with patch("mediawiki_dump.dumps.isfile", return_value=False) as mocked_method:
 
-        dump = WikipediaDump(wiki="foo")
         body = open("test/fixtures/dump.xml.bz2", "rb").read()
 
-        with responses.RequestsMock(assert_all_requests_are_fired=False) as rsps:
-            rsps.add(
-                method=responses.GET,
-                url=dump.get_url(),
-                body=body,
-                status=200,
-                headers={"content-length": str(len(body))},
-            )
-
+        with get_dump_with_mocked_http_response(body=body, status=200) as dump:
             body = "".join(
                 map(
                     lambda item: item.decode("utf8"),
