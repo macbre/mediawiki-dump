@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 import pytest
 import responses
 from mwclient import Site
@@ -80,16 +82,22 @@ def test_string_dump():
 
 
 def test_fetch_handles_http_errors():
-    with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
-        rsps.add(
-            method=responses.GET,
-            url="https://dumps.wikimedia.org/foowiki/latest/foowiki-latest-pages-meta-current.xml.bz2",
-            body="Error",
-            status=500,
-            headers={"content-length": "5"},
-        )
+    # skip file-based caching in BaseDump cache
+    # https://docs.python.org/3/library/unittest.mock.html#unittest.mock.patch
+    with patch("mediawiki_dump.dumps.isfile", return_value=False) as mocked_method:
 
-        with pytest.raises(DumpError) as ex:
-            WikipediaDump(wiki="foo").fetch()
+        with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
+            rsps.add(
+                method=responses.GET,
+                url="https://dumps.wikimedia.org/foowiki/latest/foowiki-latest-pages-meta-current.xml.bz2",
+                body="Error",
+                status=500,
+                headers={"content-length": "5"},
+            )
 
-        assert "Failed to fetch a dump, request ended with HTTP 500" in str(ex)
+            with pytest.raises(DumpError) as ex:
+                WikipediaDump(wiki="foo").fetch()
+
+            assert "Failed to fetch a dump, request ended with HTTP 500" in str(ex)
+
+    assert mocked_method.call_count == 1, "mocked isfile() was called by BaseDump.fetch"
