@@ -1,3 +1,5 @@
+import pytest
+import responses
 from mwclient import Site
 
 from mediawiki_dump.dumps import (
@@ -5,6 +7,7 @@ from mediawiki_dump.dumps import (
     WikiaDump,
     MediaWikiClientDump,
     StringDump,
+    DumpError,
 )
 from mediawiki_dump.reader import DumpReader
 
@@ -74,3 +77,19 @@ def test_mediawiki_client_dump():
 def test_string_dump():
     assert StringDump("foo").get_content() == "foo"
     assert StringDump("foobarbaz").get_content() != "foo"
+
+
+def test_fetch_handles_http_errors():
+    with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
+        rsps.add(
+            method=responses.GET,
+            url="https://dumps.wikimedia.org/foowiki/latest/foowiki-latest-pages-meta-current.xml.bz2",
+            body="Error",
+            status=500,
+            headers={"content-length": "5"},
+        )
+
+        with pytest.raises(DumpError) as ex:
+            WikipediaDump(wiki="foo").fetch()
+
+        assert "Failed to fetch a dump, request ended with HTTP 500" in str(ex)
