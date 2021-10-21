@@ -86,18 +86,50 @@ def test_fetch_handles_http_errors():
     # https://docs.python.org/3/library/unittest.mock.html#unittest.mock.patch
     with patch("mediawiki_dump.dumps.isfile", return_value=False) as mocked_method:
 
+        dump = WikipediaDump(wiki="foo")
+
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
             rsps.add(
                 method=responses.GET,
-                url="https://dumps.wikimedia.org/foowiki/latest/foowiki-latest-pages-meta-current.xml.bz2",
+                url=dump.get_url(),
                 body="Error",
                 status=500,
                 headers={"content-length": "5"},
             )
 
             with pytest.raises(DumpError) as ex:
-                WikipediaDump(wiki="foo").fetch()
+                list(dump.get_content())
 
             assert "Failed to fetch a dump, request ended with HTTP 500" in str(ex)
 
     assert mocked_method.call_count == 1, "mocked isfile() was called by BaseDump.fetch"
+
+
+def test_fetch_via_mocked_http():
+    # skip file-based caching in BaseDump cache
+    # https://docs.python.org/3/library/unittest.mock.html#unittest.mock.patch
+    with patch("mediawiki_dump.dumps.isfile", return_value=False) as mocked_method:
+
+        dump = WikipediaDump(wiki="foo")
+        body = open("test/fixtures/dump.xml.bz2", "rb").read()
+
+        with responses.RequestsMock(assert_all_requests_are_fired=False) as rsps:
+            rsps.add(
+                method=responses.GET,
+                url=dump.get_url(),
+                body=body,
+                status=200,
+                headers={"content-length": str(len(body))},
+            )
+
+            body = "".join(
+                map(
+                    lambda item: item.decode("utf8"),
+                    dump.get_content(),
+                )
+            )
+
+    assert mocked_method.call_count == 1, "mocked isfile() was called by BaseDump.fetch"
+
+    assert body.startswith("<mediawiki")
+    assert body.endswith("</mediawiki>\n")
