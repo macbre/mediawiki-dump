@@ -1,3 +1,10 @@
+from contextlib import contextmanager
+from typing import ContextManager, AnyStr
+from unittest.mock import patch
+
+
+import pytest
+import responses
 from mwclient import Site
 
 from mediawiki_dump.dumps import (
@@ -5,6 +12,7 @@ from mediawiki_dump.dumps import (
     WikiaDump,
     MediaWikiClientDump,
     StringDump,
+    DumpError,
 )
 from mediawiki_dump.reader import DumpReader
 
@@ -74,3 +82,56 @@ def test_mediawiki_client_dump():
 def test_string_dump():
     assert StringDump("foo").get_content() == "foo"
     assert StringDump("foobarbaz").get_content() != "foo"
+
+
+@contextmanager
+def get_dump_with_mocked_http_response(
+    body: AnyStr, status: int = 200
+) -> ContextManager[WikipediaDump]:
+    dump = WikipediaDump(wiki="test")
+
+    with responses.RequestsMock(assert_all_requests_are_fired=True) as mocked_responses:
+        mocked_responses.add(
+            method=responses.GET,
+            url=dump.get_url(),
+            body=body,
+            status=status,
+            headers={"content-length": str(len(body))},
+        )
+
+        yield dump
+
+
+def test_fetch_handles_http_errors():
+    # skip file-based caching in BaseDump cache
+    # https://docs.python.org/3/library/unittest.mock.html#unittest.mock.patch
+    with patch("mediawiki_dump.dumps.isfile", return_value=False) as mocked_method:
+
+        with get_dump_with_mocked_http_response(body="Error", status=500) as dump:
+            with pytest.raises(DumpError) as ex:
+                list(dump.get_content())
+
+            assert "Failed to fetch a dump, request ended with HTTP 500" in str(ex)
+
+    assert mocked_method.call_count == 1, "mocked isfile() was called by BaseDump.fetch"
+
+
+def test_fetch_via_mocked_http():
+    # skip file-based caching in BaseDump cache
+    # https://docs.python.org/3/library/unittest.mock.html#unittest.mock.patch
+    with patch("mediawiki_dump.dumps.isfile", return_value=False) as mocked_method:
+
+        body = open("test/fixtures/dump.xml.bz2", "rb").read()
+
+        with get_dump_with_mocked_http_response(body=body, status=200) as dump:
+            body = "".join(
+                map(
+                    lambda item: item.decode("utf8"),
+                    dump.get_content(),
+                )
+            )
+
+    assert mocked_method.call_count == 1, "mocked isfile() was called by BaseDump.fetch"
+
+    assert body.startswith("<mediawiki")
+    assert body.endswith("</mediawiki>\n")
