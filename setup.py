@@ -50,7 +50,7 @@ setup(
         ]
     },
     install_requires=[
-        "libarchive-c==3.2",
+        "libarchive-c==4.0",
         "requests>=2.26.0",
         "mwclient>=0.10.1",
     ],
