@@ -258,11 +258,11 @@ class MediaWikiClientDump(BaseDump):
         # https://www.mediawiki.org/wiki/Manual:Parameters_to_Special:Export
         resp = self.site.raw_call(
             script="index",
-            data=dict(
-                title="Special:Export",
-                curonly="1",
-                pages="\n".join(self.articles),
-            ),
+            data={
+                "title": "Special:Export",
+                "curonly": "1",
+                "pages": "\n".join(self.articles),
+            },
             http_method="GET",
         )
 
