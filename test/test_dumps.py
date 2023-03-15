@@ -106,7 +106,6 @@ def test_fetch_handles_http_errors():
     # skip file-based caching in BaseDump cache
     # https://docs.python.org/3/library/unittest.mock.html#unittest.mock.patch
     with patch("mediawiki_dump.dumps.isfile", return_value=False) as mocked_method:
-
         with get_dump_with_mocked_http_response(body="Error", status=500) as dump:
             with pytest.raises(DumpError) as ex:
                 list(dump.get_content())
@@ -120,7 +119,6 @@ def test_fetch_via_mocked_http():
     # skip file-based caching in BaseDump cache
     # https://docs.python.org/3/library/unittest.mock.html#unittest.mock.patch
     with patch("mediawiki_dump.dumps.isfile", return_value=False) as mocked_method:
-
         body = open("test/fixtures/dump.xml.bz2", "rb").read()
 
         with get_dump_with_mocked_http_response(body=body, status=200) as dump:

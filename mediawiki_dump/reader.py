@@ -261,7 +261,6 @@ class DumpReader:
                 ) = page
 
                 if self.filter_by_namespace(namespace):
-
                     if content == "":
                         # https://fo.wikipedia.org/wiki/Kjak:L%C3%ADvfr%C3%B8%C3%B0i
                         self.logger.warning("Page #%d: %s is empty", page_id, title)
