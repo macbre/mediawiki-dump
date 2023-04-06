@@ -57,8 +57,8 @@ def clean(text: str) -> str:
         flags=re.MULTILINE,
     )  # == a == -> a
 
-    # files and other links with namespaces
-    text = re.sub(r"\[\[[^:\]]+:[^\]]+\]\]", "", text)  # [[foo:b]] -> ''
+    # files and other links with namespaces (but without labels)
+    text = re.sub(r"\[\[[^:\]]+:[^\]|]+\]\]", "", text)  # [[foo:b]] -> ''
 
     # local links
     text = re.sub(r"\[\[([^|\]]+)\]\]", "\\1", text)  # [[a]] -> a
