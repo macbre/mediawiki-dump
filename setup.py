@@ -37,7 +37,7 @@ setup(
         "dev": [
             "black==23.9.1",
             "coveralls==3.3.1",
-            "pylint==2.17.6",
+            "pylint==2.17.7",
             "pytest==7.4.2",
             "pytest-cov==4.1.0",
             "responses==0.23.3",
