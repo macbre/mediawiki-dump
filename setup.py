@@ -38,7 +38,7 @@ setup(
             "black==23.12.1",
             "coveralls==3.3.1",
             "pylint==2.17.7",
-            "pytest==7.4.3",
+            "pytest==7.4.4",
             "pytest-cov==4.1.0",
             "responses==0.24.1",
         ]
