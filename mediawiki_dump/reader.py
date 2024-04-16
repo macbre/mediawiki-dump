@@ -181,8 +181,7 @@ class DumpHandler(sax.ContentHandler):
         """
         Used by DumpReader to yield pages as we parse the XML dump
         """
-        for entry in self.entries_batch:
-            yield entry
+        yield from self.entries_batch
 
         self.entries_batch = []
 

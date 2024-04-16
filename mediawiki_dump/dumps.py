@@ -174,8 +174,7 @@ class WikiaDump(BaseDump):
         with self.fetch() as handler:
             with libarchive.file_reader(handler.name) as archive:
                 for entry in archive:
-                    for block in entry.get_blocks():
-                        yield block
+                    yield from entry.get_blocks()
 
 
 class LocalFileDump(BaseDump):
