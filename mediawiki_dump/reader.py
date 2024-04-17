@@ -3,6 +3,7 @@ Class used to parse provided XML dump and emit a stream of articles content
 
 https://gist.github.com/macbre/1543d945f5244c5c68681966f07e2d6c
 """
+
 import logging
 from typing import Generator
 
