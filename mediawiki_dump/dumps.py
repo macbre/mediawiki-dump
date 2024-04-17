@@ -1,6 +1,7 @@
 """
 CLasses that support fetching dumps
 """
+
 import bz2
 import logging
 
@@ -39,9 +40,9 @@ class BaseDump:
         self.logger = logging.getLogger(self.__class__.__name__)
 
         self.http = requests.session()
-        self.http.headers[
-            "User-Agent"
-        ] = "python-mediawiki-dump (+https://github.com/macbre/mediawiki-dump)"
+        self.http.headers["User-Agent"] = (
+            "python-mediawiki-dump (+https://github.com/macbre/mediawiki-dump)"
+        )
 
         # do we want a full history or just the latest revisions?
         self.full_history = full_history

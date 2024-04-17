@@ -1,6 +1,7 @@
 """
 A class representing dump entry
 """
+
 from .utils import parse_date_string
 
 
