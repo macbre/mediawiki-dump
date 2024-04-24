@@ -178,7 +178,24 @@ class WikiaDump(BaseDump):
                     yield from entry.get_blocks()
 
 
-class LocalFileDump(BaseDump):
+class IteratorDump(BaseDump):
+    """
+    This class can be used to pass the XML dump via an iterator,
+    for instance when streaming and decompressing a local file.
+    """
+
+    def __init__(self, iterator: iter):
+        super().__init__(wiki="")
+        self.iterator = iterator
+
+    def get_url(self):
+        pass
+
+    def get_content(self):
+        yield from self.iterator
+
+
+class LocalFileDump(IteratorDump):
     """
     This class can be used to load locally stored XML dump file
     """
@@ -191,9 +208,9 @@ class LocalFileDump(BaseDump):
         pass
 
     def get_content(self):
-        """Yields processed pieces of content"""
-        # pylint:disable=consider-using-with
-        return open(self.dump_file, mode="rt", encoding="utf-8")
+        with open(self.dump_file, mode="rb") as fp:
+            self.iterator = fp
+            yield from super().get_content()
 
 
 class StringDump(BaseDump):
