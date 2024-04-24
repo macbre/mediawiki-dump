@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-VERSION = "1.2.1"
+VERSION = "1.3.0"
 
 # @see https://packaging.python.org/tutorials/packaging-projects/#creating-setup-py
 with open("README.md", "r") as fh:
@@ -16,7 +16,7 @@ setup(
     description="Python package for working with MediaWiki XML content dumps",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    keywords="dump fandom mediawiki wikipedia wikia",
+    keywords="dump fandom mediawiki wikipedia wikia xml",
     url="https://github.com/macbre/mediawiki-dump",
     # https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
