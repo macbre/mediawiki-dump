@@ -210,3 +210,18 @@ with open("pages.txt", mode="wt", encoding="utf-8") as fp:
 
 logging.info("pages.txt file created")
 ```
+
+## Reading dumps from local files
+
+You can also read dumps from local, non-compressed XML files:
+
+```pythom
+from mediawiki_dump.dumps import LocalFileDump
+from mediawiki_dump.reader import DumpReader
+
+dump = LocalFileDump(dump_file="test/fixtures/dump.xml")
+reader = DumpReader()
+
+pages = [entry.title for entry in reader.read(dump)]
+print(dump, pages)
+```
