@@ -215,11 +215,32 @@ logging.info("pages.txt file created")
 
 You can also read dumps from local, non-compressed XML files:
 
-```pythom
+```python
 from mediawiki_dump.dumps import LocalFileDump
 from mediawiki_dump.reader import DumpReader
 
 dump = LocalFileDump(dump_file="test/fixtures/dump.xml")
+reader = DumpReader()
+
+pages = [entry.title for entry in reader.read(dump)]
+print(dump, pages)
+```
+
+## Reading dumps from compressed local files
+
+Or any other iterators (like HTTP responses):
+
+```python
+import bz2
+
+from mediawiki_dump.dumps import IteratorDump
+from mediawiki_dump.reader import DumpReader
+
+def get_content(file_name: str):
+    with bz2.open(file_name, mode="r") as fp:
+        yield from fp
+
+dump = IteratorDump(iterator=get_content(file_name="test/fixtures/dump.xml.bz2"))
 reader = DumpReader()
 
 pages = [entry.title for entry in reader.read(dump)]
