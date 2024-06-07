@@ -40,7 +40,7 @@ setup(
             "pylint==3.2.2",
             "pytest==8.2.2",
             "pytest-cov==5.0.0",
-            "responses==0.25.0",
+            "responses==0.25.2",
         ]
     },
     install_requires=[
