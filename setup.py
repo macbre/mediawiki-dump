@@ -31,7 +31,7 @@ setup(
         # Pick your license as you wish
         "License :: OSI Approved :: MIT License",
     ],
-    python_requires=">=3.8",
+    python_requires=">=3.9",
     packages=find_packages(),
     extras_require={
         "dev": [
