@@ -13,11 +13,13 @@ jobs:
     strategy:
       matrix:
         # https://github.com/actions/python-versions/blob/main/versions-manifest.json
+        # https://devguide.python.org/versions/
         python-version:
-        - "3.8"
         - "3.9"
         - "3.10"
         - "3.11"
+        - "3.12"
+        - "3.13"
 
     steps:
     - uses: actions/checkout@v4
