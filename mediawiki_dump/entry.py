@@ -11,7 +11,7 @@ class DumpEntry:
     An entry in XML dump
     """
 
-    # pylint: disable=too-many-arguments
+    # pylint: disable=too-many-positional-arguments,too-many-arguments
     def __init__(
         self,
         namespace: int,
