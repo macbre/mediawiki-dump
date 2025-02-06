@@ -31,12 +31,11 @@ setup(
         # Pick your license as you wish
         "License :: OSI Approved :: MIT License",
     ],
-    python_requires=">=3.8",
+    python_requires=">=3.9",
     packages=find_packages(),
     extras_require={
         "dev": [
             "black==24.8.0",
-            "coveralls==4.0.1",
             "pylint==3.2.7",
             "pytest==8.3.4",
             "pytest-cov==5.0.0",
