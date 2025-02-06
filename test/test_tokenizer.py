@@ -224,8 +224,8 @@ class TestTokenizer:
         assert tokenize("Foo&bar") == ["Foo", "bar"]
 
         # <U+00AD>
-        assert tokenize("Foo\xADbar") == ["Foo", "bar"]
-        assert tokenize("Foo\u00ADbar") == ["Foo", "bar"]
+        assert tokenize("Foo\xadbar") == ["Foo", "bar"]
+        assert tokenize("Foo\u00adbar") == ["Foo", "bar"]
 
         assert tokenize("Foo - bar") == ["Foo", "bar"]
 
