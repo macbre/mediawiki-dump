@@ -90,9 +90,7 @@ class TestTokenizerClean(TestCase):
         assert clean("foo __ foo __ bar") == "foo __ foo __ bar"
 
     def test_tables(self):
-        assert (
-            clean(
-                """
+        assert clean("""
 foo
 {| class="wikitable"
 |-
@@ -106,10 +104,7 @@ foo
 |-
 |}
 bar
-""".strip()
-            )
-            == "foo\n\nbar"
-        )
+""".strip()) == "foo\n\nbar"
 
     def test_complex(self):
         assert clean("=== Á [[Borðoy|Borðoynni]] ===") == "Á Borðoynni"
@@ -129,22 +124,15 @@ bar
             == "Fugloy, sum hevur fingið navn av tí nógva fugli, ið har búleikast, er tann minsta av Norðoyum"
         )
 
-        assert (
-            clean(
-                """
+        assert clean("""
 foo{{Infobox cyclist
 | birth_date    = {{birth date and age|1987|7|5|df=yes}}
 | height        = {{convert|1,81|m|ftin|abbr=on}}
 | weight        = {{convert|78|kg|lb|abbr=on}}
 }}bar
-""".strip()
-            )
-            == "foo bar"
-        )
+""".strip()) == "foo bar"
 
-        assert (
-            clean(
-                """
+        assert clean("""
 {{Infobox person
 | name = Wes Craven
 | image = Wes Craven 2010.jpg
@@ -162,10 +150,7 @@ foo{{Infobox cyclist
 | website = {{URL|http://www.wescraven.com}}
 | children = 2, harímillum Jonathan Craven
 }}
-""".strip()
-            )
-            == ""
-        )
+""".strip()) == ""
 
     def test_from_file(self):
         # https://fo.wikipedia.org/wiki/Klaksv%C3%ADkar_kommuna
