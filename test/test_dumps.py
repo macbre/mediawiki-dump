@@ -68,15 +68,13 @@ def test_get_cache_filename():
 
 def test_mediawiki_client_dump():
     """Integration test for MediaWikiClientDump class"""
-    wiki = Site(host="vim.fandom.com", path="/")
-    dump = MediaWikiClientDump(
-        wiki, articles=map(str, ["Vim scripts", "Vim_documentation"])
-    )
+    wiki = Site(host="pl.wikipedia.org", path="/w/")
+    dump = MediaWikiClientDump(wiki, articles=map(str, ["Vim", "Emacs"]))
 
     pages = [entry.title for entry in DumpReader().read(dump)]
 
     print(dump, pages)
-    assert pages == ["Vim scripts", "Vim documentation"]
+    assert pages == ["Vim", "Emacs"]
 
 
 def test_string_dump():
@@ -119,7 +117,8 @@ def test_fetch_via_mocked_http():
     # skip file-based caching in BaseDump cache
     # https://docs.python.org/3/library/unittest.mock.html#unittest.mock.patch
     with patch("mediawiki_dump.dumps.isfile", return_value=False) as mocked_method:
-        body = open("test/fixtures/dump.xml.bz2", "rb").read()
+        with open("test/fixtures/dump.xml.bz2", "rb") as f:
+            body = f.read()
 
         with get_dump_with_mocked_http_response(body=body, status=200) as dump:
             body = "".join(
