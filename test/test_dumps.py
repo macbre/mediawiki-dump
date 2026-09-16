@@ -68,15 +68,13 @@ def test_get_cache_filename():
 
 def test_mediawiki_client_dump():
     """Integration test for MediaWikiClientDump class"""
-    wiki = Site(host="vim.fandom.com", path="/")
-    dump = MediaWikiClientDump(
-        wiki, articles=map(str, ["Vim scripts", "Vim_documentation"])
-    )
+    wiki = Site(host="pl.wikipedia.org", path="/w/")
+    dump = MediaWikiClientDump(wiki, articles=map(str, ["Vim", "Emacs"]))
 
     pages = [entry.title for entry in DumpReader().read(dump)]
 
     print(dump, pages)
-    assert pages == ["Vim scripts", "Vim documentation"]
+    assert pages == ["Vim", "Emacs"]
 
 
 def test_string_dump():
