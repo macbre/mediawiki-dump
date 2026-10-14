@@ -36,7 +36,7 @@ setup(
     extras_require={
         "dev": [
             "black==26.10.0",
-            "pylint==4.1.2",
+            "pylint==4.1.3",
             "pytest==9.1.1",
             "pytest-cov==7.1.0",
             "responses==0.26.3",
